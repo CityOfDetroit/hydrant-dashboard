@@ -47,9 +47,6 @@ export default class Map {
     this.map.on('style.load',()=>{
       this.loadMap();
     });
-    this.map.on("mousemove", function(e, parent = this) {
-      Map.hoverFunction(e);
-    });
     this.map.on('click', function (e) {
       Map.clickFunction(e);
     });
@@ -114,11 +111,35 @@ export default class Map {
       }
     }
   }
-  removeSources(source){
-
+  removeSources(sources){
+    for (var i = 0; i < sources.length; i++) {
+      try {
+        if(this.map.getSource(sources[i]) != undefined){
+            this.map.removeSource(sources[i]);
+            for (var x = 0; x < this.currentState.sources.length; x++) {
+              (this.currentState.sources[x].id === source[i]) ? this.currentState.sources[x].splice(i, 1) : 0;
+            }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
   removeLayers(layers){
-
+    console.log('removing layers');
+    console.log(layers);
+    for (var i = 0; i < layers.length; i++) {
+      try {
+        if(this.map.getLayer(layers[i]) != undefined){
+            this.map.removeLayer(layers[i]);
+            for (var x = 0; x < this.currentState.layers.length; x++) {
+              (this.currentState.layers[x].id === layers[i]) ? this.currentState.layers.splice(x, 1) : 0;
+            }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
   updateSources(sources){
     this.currentState.sources = this.currentState.sources.concat(sources);
@@ -132,33 +153,34 @@ export default class Map {
   static hoverFunction(e){
     // console.log(e);
     try {
-      var features = Map.map.queryRenderedFeatures(e.point, {
-        layers: ["districs-fill"]
+      var features = this.map.queryRenderedFeatures(e.point, {
+        layers: ["companies-fill"]
       });
-      console.log(features);
+      // console.log(features);
       if (features.length) {
-        Map.map.setFilter("districs-hover", ["==", "company_di", features[0].properties.company_di]);
+        this.map.setFilter("companies-hover", ["==", "new_engine", features[0].properties.new_engine]);
       }else{
-        Map.map.setFilter("districs-hover", ["==", "company_di", ""]);
-        // features = map.queryRenderedFeatures(e.point, {
-        //   layers: ["neighborhoods-fill"]
-        // });
-        // if (!features.length) {
-        //   features = map.queryRenderedFeatures(e.point, {
-        //     layers: ["parcel-fill"]
-        //   });
-        //   // console.log(features);
-        //   // if (features.length) {
-        //   //   map.setFilter("parcel-fill-hover", ["==", "parcelno", features[0].properties.parcelno]);
-        //   // }else{
-        //   //   map.setFilter("parcel-fill-hover", ["==", "parcelno", ""]);
-        //   // }
-        // }
+        this.map.setFilter("companies-hover", ["==", "new_engine", ""]);
+        features = map.queryRenderedFeatures(e.point, {
+          layers: ["districts-fill"]
+        });
+        if (features.length) {
+          this.map.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
+        }else{
+          this.map.setFilter("districts-hover", ["==", "company_di", ""]);
+          console.log('no feature');
+        }
       }
-      Map.map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+      this.map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
     } catch (e) {
-      // console.log("no feature");
+      console.log("Error: " + e);
     }
+  }
+  static getMap(){
+    return this.map;
+  }
+  static setMap(map){
+    this.map = map;
   }
   static geocoderResultsFunction(point){
     // console.log(point);

@@ -6,8 +6,7 @@ const turf = require('@turf/simplify');
 const arcGIS = require('terraformer-arcgis-parser');
 export default class Controller {
   constructor(init) {
-    this.map = null;
-    Controller.setMap(new Map(init));
+    this.map = new Map(init);
     this.state = {
       viewType: null,
       selectedItem: null,
@@ -28,6 +27,7 @@ export default class Controller {
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     let company = document.getElementById('company').value;
+    console.log('moving');
     switch (true) {
       case startDate === '':
         document.querySelector('#alert-overlay div').innerHTML = "Need start date.";
@@ -50,11 +50,13 @@ export default class Controller {
         endDate = temp[2] + '-' + temp[0] + '-' + temp[1];
         document.querySelector('.data-panel').className = "data-panel active";
         document.querySelector('.map-panel').className = "map-panel active";
-        Controller.getMap().map.resize();
+        console.log(this.map);
+        this.map.map.resize();
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=5So00jOfZyq3hcqvFzBlBd_84UfknMx26gj_s3tPSj0L1_yGnn6qcd_WvnNH6U-OiQzdYIqbk76nk76R_RJAkZSoYMDo2zPcXla9gGDcRha7mxvAt6ACpKgLMzgz7BLNWSrdgw9gIxTlKquL4OJMON6ukWwdIuKiztmQ5CTFLR0nVLdEpCkfzI912F5iLTFmHvrO7vDU6YklT1t4XBtfIQ2Y57xdJvcCNQE3qbqR2ESwldHo60rS5xEgVh-mg0np', function(response){
             let centerPoint = JSON.parse(response);
             console.log(centerPoint);
-            Controller.getMap().map.flyTo({
+            console.log(this.map);
+            this.map.map.flyTo({
                 center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
                 zoom: 13,
                 bearing: 0,
@@ -72,33 +74,26 @@ export default class Controller {
                 }
             });
         });
-        document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span>Company</span></a></li>';
+        document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span>City</span></a></li><li><a href="#"><span>2</span><span>Company</span></a></li>';
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2017FireHydrantDistricts/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=', function(response){
           let responseObj = JSON.parse(response);
           console.log(responseObj);
           document.querySelector('.tabular-titles').innerHTML = "<div>District</div><div>Surveyed</div><div>Need Survey</div>";
           document.querySelector('.tabular-body').innerHTML = "Loading ...";
 
-          try {
-            if(Controller.getMap().map.getSource("districts") != undefined)
-              Controller.getMap().map.removeSource("districts");
-            if(Controller.getMap().map.getLayer("districs-fill") != undefined)
-              Controller.getMap().map.removeLayer("districs-fill");
-            if(Controller.getMap().map.getLayer("districs-hover") != undefined)
-              Controller.getMap().map.removeLayer("districs-hover");
-          } catch (e) {
-            console.log("Error: " + e);
-          }
-          Controller.getMap().updateSources([{
+          this.map.removeLayers(['districs-fill','districs-borders','districs-hover']);
+
+          this.map.updateSources([{
             id: "districts",
             type: "geojson",
             data: responseObj
           }]);
-          Controller.getMap().updateLayers([
+          this.map.updateLayers([
             {
               "id": "districs-fill",
               "type": "fill",
               "source": "districts",
+              "minzoom": 13,
               "layout": {},
               "paint": {
                 "fill-color": '#9FD5B3',
@@ -109,6 +104,7 @@ export default class Controller {
               "id": "districs-borders",
               "type": "line",
               "source": "districts",
+              "minzoom": 13,
               "layout": {},
               "paint": {
                 "line-color": "#004544",
@@ -119,6 +115,7 @@ export default class Controller {
               "id": "districs-hover",
               "type": "fill",
               "source": "districts",
+              "minzoom": 13,
               "layout": {},
               "paint": {
                 "fill-color": '#23A696',
@@ -127,16 +124,16 @@ export default class Controller {
               "filter": ["==", "company_di", ""]
             }
           ]);
-          Controller.getMap().loadMap();
+          this.map.loadMap();
           Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=q_I5u9NsU394TD1r8ivM2ABFGzDSpV4syF8RUojmiorqWmE1ILksZgi8homADnEBeGiCt0t5C1pzmyTbcj3_aNrpby5e_WK5zOz3lLi6vbmYHy7K4bXrCfRY0iDdv8FgWtP--BSlb6BEurVx3jaYtfl1BwsjCxMfaAgqhU9sm1RtQNyzj56zdjfXjQNb298d-1nBIaZDZ4JWYvzX1zwW_DiZ0paiP7zZElRxGsKrnWeu9oYjY-OtaAUYtPR9E-Zk', function(response){
             let responseObj = JSON.parse(response);
             console.log(responseObj);
-            Controller.getMap().updateSources([{
+            this.map.updateSources([{
               id: "districts-labels",
               type: "geojson",
               data: responseObj
             }]);
-            Controller.getMap().updateLayers([
+            this.map.updateLayers([
               {
                 'id': 'districts-labels',
                 'type': 'symbol',
@@ -152,7 +149,7 @@ export default class Controller {
                 }
               }
             ]);
-            Controller.getMap().loadMap();
+            this.map.loadMap();
           });
           let tempTabBody = "";
           let totalSurveyed = 0;

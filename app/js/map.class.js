@@ -114,6 +114,7 @@ export default class Map {
   removeSources(sources){
     for (var i = 0; i < sources.length; i++) {
       try {
+        console.log(this.map);
         if(this.map.getSource(sources[i]) != undefined){
             this.map.removeSource(sources[i]);
             for (var x = 0; x < this.currentState.sources.length; x++) {
@@ -128,6 +129,7 @@ export default class Map {
   removeLayers(layers){
     console.log('removing layers');
     console.log(layers);
+    console.log(this.map);
     for (var i = 0; i < layers.length; i++) {
       try {
         if(this.map.getLayer(layers[i]) != undefined){

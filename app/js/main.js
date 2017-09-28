@@ -87,7 +87,7 @@ import Connector from './connector.class.js';
     });
   });
   controller.map.map.on("mousemove", function(e, parent = this) {
-    console.log(this);
+    // console.log(this);
     try {
       var features = this.queryRenderedFeatures(e.point, {
         layers: ["companies-fill"]
@@ -104,7 +104,7 @@ import Connector from './connector.class.js';
           this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
         }else{
           this.setFilter("districts-hover", ["==", "company_di", ""]);
-          console.log('no feature');
+          // console.log('no feature');
         }
       }
       this.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
@@ -112,7 +112,9 @@ import Connector from './connector.class.js';
       console.log("Error: " + e);
     }
   });
-  document.getElementById('query').addEventListener('click', controller.filterData);
+  document.getElementById('query').addEventListener('click', function(e){
+    controller.filterData(e, controller);
+  });
   document.querySelector('.close').addEventListener('click', controller.closeAlert);
   $( "#start-date" ).datepicker();
   $( "#end-date" ).datepicker();

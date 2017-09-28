@@ -141,11 +141,29 @@ export default class Map {
       }
     }
   }
+  updateMap(sources,layers){
+    this.updateSources(sources);
+    this.updateLayers(layers);
+  }
   updateSources(sources){
-    this.currentState.sources = this.currentState.sources.concat(sources);
+    for (var i = 0; i < sources.length; i++) {
+      let found = false;
+      this.currentState.sources.forEach(function(oldSource){
+        (oldSource.id === sources[i].id) ? 0 : found = true;
+        return 0;
+      });
+      (found) ? 0 : this.currentState.sources.push(source);
+    }
   }
   updateLayers(layers){
-    this.currentState.layers = this.currentState.layers.concat(layers);
+    for (var i = 0; i < layers.length; i++) {
+      let found = false;
+      this.currentState.layers.forEach(function(oldLayer){
+        (oldLayer.id === layers[i].id) ? 0 : found = true;
+        return 0;
+      });
+      (found) ? 0 : this.currentState.layers.push(layer);
+    }
   }
   static clickFunction(point){
     console.log(point);

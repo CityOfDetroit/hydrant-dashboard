@@ -10,7 +10,7 @@ export default class Map {
         accessToken: mapboxgl.accessToken
       });
       this.geocoder.on('result', function(e) {
-        console.log(ev);
+        // console.log(ev);
         Map.geocoderResultsFunction(e);
       });
     }
@@ -30,7 +30,6 @@ export default class Map {
       zoom: init.zoom, // starting zoom
       keyboard: true
     });
-    console.log(this.map);
     this.styleURL = init.styleURL;
     this.baseLayers = {
       street: init.baseLayers.street,
@@ -52,7 +51,6 @@ export default class Map {
     this.map.setStyle(`${this.styleURL}/${this.baseLayers[baseMap]}`);
   }
   loadMap() {
-    console.log('loading  map');
     let sourcePromise = new Promise((resolve, reject) => {
       (this.loadSources()) ? resolve(this) : reject(this);
     });
@@ -63,8 +61,6 @@ export default class Map {
     });
   }
   loadSources() {
-    console.log('loading sources');
-    console.log(this.currentState.sources);
     try {
       for (var i = 0; i < this.currentState.sources.length; i++) {
         let tempSource = {
@@ -72,9 +68,7 @@ export default class Map {
         };
         (this.currentState.sources[i].data === undefined) ? 0: tempSource.data = this.currentState.sources[i].data;
         (this.currentState.sources[i].url === undefined) ? 0: tempSource.url = this.currentState.sources[i].url;
-        console.log(this.map.getSource(this.currentState.sources[i].id));
         if(this.map.getSource(this.currentState.sources[i].id) === undefined){
-          console.log('adding new source');
           this.map.addSource(this.currentState.sources[i].id, tempSource);
         }
       }
@@ -85,8 +79,6 @@ export default class Map {
     }
   }
   loadLayers(val) {
-    console.log('loading layers');
-    console.log(val.currentState.layers);
     for (var i = 0; i < val.currentState.layers.length; i++) {
       let tempLayer = {
         id: val.currentState.layers[i].id,
@@ -101,9 +93,7 @@ export default class Map {
       (val.currentState.layers[i].maxzoom === undefined) ? 0: tempLayer.maxzoom = val.currentState.layers[i].maxzoom;
       (val.currentState.layers[i].metadata === undefined) ? 0: tempLayer.metadata = val.currentState.layers[i].metadata;
       (val.currentState.layers[i].ref === undefined) ? 0: tempLayer.ref = val.currentState.layers[i].ref;
-      console.log(val.map.getLayer(val.currentState.layers[i].id));
       if(val.map.getLayer(val.currentState.layers[i].id) === undefined){
-        console.log('adding new layer');
         val.map.addLayer(tempLayer);
       }
     }
@@ -111,7 +101,6 @@ export default class Map {
   removeSources(sources){
     for (var i = 0; i < sources.length; i++) {
       try {
-        console.log(this.map);
         if(this.map.getSource(sources[i]) != undefined){
             this.map.removeSource(sources[i]);
             for (var x = 0; x < this.currentState.sources.length; x++) {
@@ -124,9 +113,6 @@ export default class Map {
     }
   }
   removeLayers(layers){
-    console.log('removing layers');
-    console.log(layers);
-    console.log(this.map);
     for (var i = 0; i < layers.length; i++) {
       try {
         if(this.map.getLayer(layers[i]) != undefined){
@@ -145,8 +131,6 @@ export default class Map {
     this.updateLayers(layers);
   }
   updateSources(sources){
-    console.log('updating sources');
-    console.log(sources);
     for (var i = 0; i < sources.length; i++) {
       let found = false;
       this.currentState.sources.forEach(function(oldSource){
@@ -154,11 +138,8 @@ export default class Map {
       });
       (found) ? 0 : this.currentState.sources.push(sources[i]);
     }
-    console.log(this.currentState.sources);
   }
   updateLayers(layers){
-    console.log('updating layers');
-    console.log(layers);
     for (var i = 0; i < layers.length; i++) {
       let found = false;
       this.currentState.layers.forEach(function(oldLayer){
@@ -166,7 +147,6 @@ export default class Map {
       });
       (found) ? 0 : this.currentState.layers.push(layers[i]);
     }
-    console.log(this.currentState.layers);
   }
   static getMap(){
     return this.map;

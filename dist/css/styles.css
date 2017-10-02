@@ -223,14 +223,15 @@ ul {
   width: 100%; }
 
 .inner {
-  max-width: 30em; }
+  width: calc(100% - 1em); }
 
 .breadcrumbs ul {
   display: flex; }
 
 .breadcrumbs li {
   float: left;
-  flex: 1; }
+  flex: 1;
+  max-width: 30em; }
 
 .breadcrumbs a {
   position: relative;
@@ -360,7 +361,7 @@ main {
     main .top-numbers article {
       flex: 1;
       display: flex;
-      height: 25vh;
+      height: 20vh;
       background-color: #004544;
       color: #9fd5b3; }
     main .top-numbers div {
@@ -371,7 +372,7 @@ main {
       font-size: 2em; }
   main .tabular-data {
     overflow-y: auto;
-    height: calc(75vh - 13em); }
+    height: calc(80vh - 13em); }
   main .tabular-titles {
     display: flex; }
     main .tabular-titles div {

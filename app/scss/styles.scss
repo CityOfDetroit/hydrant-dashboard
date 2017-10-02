@@ -269,15 +269,12 @@ ul {
   text-align: center;
 }
 
-.inner {
-}
-
 .breadcrumbs {
 	width: 100%;
 }
 
 .inner{
-	max-width: 30em;
+	width: calc(100% - 1em;)
 }
 
 .breadcrumbs ul {
@@ -287,6 +284,7 @@ ul {
 .breadcrumbs li {
   float: left;
 	flex: 1;
+  max-width: 30em;
 }
 
 .breadcrumbs a {
@@ -471,7 +469,7 @@ main {
 		article{
 			flex: 1;
 			display: flex;
-			height: 25vh;
+			height: 20vh;
 			background-color: $color-1;
 			color: $color-3;
 		}
@@ -489,7 +487,7 @@ main {
 
 	.tabular-data{
 		overflow-y: auto;
-		height: calc(75vh - 13em);
+		height: calc(80vh - 13em);
 	}
 
 	.tabular-titles{

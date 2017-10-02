@@ -14,7 +14,7 @@ export default class Connector {
     xmlHttp.send(null);
   }
   static postData(URL, data, success, parseType = null){
-    console.log(URL);
+    // console.log(URL);
     let params = null;
     if(parseType){
       params = JSON.stringify(data);
@@ -23,12 +23,12 @@ export default class Connector {
             function(k){ return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]); }
         ).join('&');
     }
-    console.log(params);
+    // console.log(params);
     let xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlHttp.open('POST', URL);
     xmlHttp.onload  = function() {
       if (xmlHttp.readyState>3 && xmlHttp.status==200) {
-        console.log('xmlHttp success');
+        // console.log('xmlHttp success');
         success(xmlHttp.response);
       }else{
         console.log('xmlHttp error');

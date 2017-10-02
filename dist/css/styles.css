@@ -382,15 +382,99 @@ main {
       font-weight: bold; }
   main .tabular-body .tabular-row:nth-child(even) {
     background-color: #9fd5b3; }
+  main .companies-snapshots {
+    display: none; }
+  main .companies-snapshots.active {
+    display: block; }
+  main .loading-box {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold; }
+  main .dot-1, main .dot-2, main .dot-3 {
+    opacity: 0; }
+  main .dot-1 {
+    animation: dot-animation-1 2s infinite ease forwards; }
+  main .dot-2 {
+    animation: dot-animation-2 2s infinite ease forwards; }
+  main .dot-3 {
+    animation: dot-animation-3 2s infinite ease forwards; }
+
+@-webkit-keyframes dot-animation-1 {
+  0% {
+    opacity: 1; }
+  33% {
+    opacity: 0; }
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes dot-animation-2 {
+  0% {
+    opacity: 0; }
+  33% {
+    opacity: 1; }
+  66% {
+    opacity: 0; } }
+
+@-webkit-keyframes dot-animation-3 {
+  0% {
+    opacity: 0; }
+  66% {
+    opacity: 1; }
+  100% {
+    opacity: 0; } }
   main .snap {
     margin-bottom: 1em; }
     main .snap label {
       display: flex;
+      position: relative;
       width: 100%;
       cursor: pointer; }
       main .snap label span {
         padding: .5em;
+        width: 3em;
         font-weight: bold; }
+  main [class^="tooltip"] {
+    position: relative; }
+    main [class^="tooltip"]:after {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      content: attr(data-tooltip);
+      padding: 6px 10px;
+      top: 1.4em;
+      left: 50%;
+      transform: translateX(-50%) translateY(-2px);
+      background: grey;
+      color: white;
+      white-space: nowrap;
+      z-index: 2;
+      border-radius: 2px;
+      transition: opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1), transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1); }
+    main [class^="tooltip"]:hover:after {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0); }
+  main .tooltip--triangle:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: solid 5px transparent;
+    border-right: solid 5px transparent;
+    border-bottom: solid 5px grey;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    transform: translateX(-50%) translateY(-2px);
+    top: 1.1em;
+    left: 50%;
+    transition: opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1), transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
+    z-index: 3; }
+  main .tooltip--triangle:hover:before {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0); }
   main .progress {
     flex: 1;
     padding: 4px;

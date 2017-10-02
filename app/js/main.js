@@ -80,11 +80,33 @@ import Connector from './connector.class.js';
       }
     ]
   });
-  Connector.getData('../private/login.json', function(response){
-    Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response), function(response){
-      console.log(response);
-      Controller.setToken(response);
-    });
+  controller.map.map.on("mousemove", function(e, parent = this) {
+    // console.log(this);
+    try {
+      var features = this.queryRenderedFeatures(e.point, {
+        layers: ["companies-fill"]
+      });
+      // console.log(features);
+      if (features.length) {
+        this.setFilter("companies-hover", ["==", "new_engine", features[0].properties.new_engine]);
+      }else{
+        this.setFilter("companies-hover", ["==", "new_engine", ""]);
+        if (this.getLayer("districts-fill")) {
+          features = this.queryRenderedFeatures(e.point, {
+            layers: ["districts-fill"]
+          });
+          if (features.length) {
+            this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
+          }else{
+            this.setFilter("districts-hover", ["==", "company_di", ""]);
+            // console.log('no feature');
+          }
+        }
+      }
+      this.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+    } catch (e) {
+      console.log("Error: " + e);
+    }
   });
   controller.map.map.on("mousemove", function(e, parent = this) {
     // console.log(this);
@@ -97,17 +119,43 @@ import Connector from './connector.class.js';
         this.setFilter("companies-hover", ["==", "new_engine", features[0].properties.new_engine]);
       }else{
         this.setFilter("companies-hover", ["==", "new_engine", ""]);
-        features = map.queryRenderedFeatures(e.point, {
-          layers: ["districts-fill"]
-        });
-        if (features.length) {
-          this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
-        }else{
-          this.setFilter("districts-hover", ["==", "company_di", ""]);
-          // console.log('no feature');
+        if (this.getLayer("districts-fill")) {
+          features = this.queryRenderedFeatures(e.point, {
+            layers: ["districts-fill"]
+          });
+          if (features.length) {
+            this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
+          }else{
+            this.setFilter("districts-hover", ["==", "company_di", ""]);
+            // console.log('no feature');
+          }
         }
       }
       this.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+    } catch (e) {
+      console.log("Error: " + e);
+    }
+  });
+  controller.map.map.on("click", function(e, parent = this) {
+    try {
+      var features = this.queryRenderedFeatures(e.point, {
+        layers: ["companies-fill"]
+      });
+      if (features.length) {
+        console.log(features);
+        controller.filterData(features, controller);
+      }else{
+        if (this.getLayer("districts-fill")) {
+          features = this.queryRenderedFeatures(e.point, {
+            layers: ["districts-fill"]
+          });
+          if (features.length) {
+            console.log(features);
+          }else{
+            console.log('no feature');
+          }
+        }
+      }
     } catch (e) {
       console.log("Error: " + e);
     }

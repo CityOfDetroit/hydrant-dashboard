@@ -47,9 +47,6 @@ export default class Map {
     this.map.on('style.load',()=>{
       this.loadMap();
     });
-    this.map.on('click', function (e) {
-      Map.clickFunction(e);
-    });
   }
   changeBaseMap(baseMap){
     this.map.setStyle(`${this.styleURL}/${this.baseLayers[baseMap]}`);
@@ -148,53 +145,28 @@ export default class Map {
     this.updateLayers(layers);
   }
   updateSources(sources){
+    console.log('updating sources');
+    console.log(sources);
     for (var i = 0; i < sources.length; i++) {
       let found = false;
       this.currentState.sources.forEach(function(oldSource){
-        (oldSource.id === sources[i].id) ? 0 : found = true;
-        return 0;
+        (oldSource.id === sources[i].id) ? found = true : 0;
       });
-      (found) ? 0 : this.currentState.sources.push(source);
+      (found) ? 0 : this.currentState.sources.push(sources[i]);
     }
+    console.log(this.currentState.sources);
   }
   updateLayers(layers){
+    console.log('updating layers');
+    console.log(layers);
     for (var i = 0; i < layers.length; i++) {
       let found = false;
       this.currentState.layers.forEach(function(oldLayer){
-        (oldLayer.id === layers[i].id) ? 0 : found = true;
-        return 0;
+        (oldLayer.id === layers[i].id) ? found = true : 0;
       });
-      (found) ? 0 : this.currentState.layers.push(layer);
+      (found) ? 0 : this.currentState.layers.push(layers[i]);
     }
-  }
-  static clickFunction(point){
-    console.log(point);
-  }
-  static hoverFunction(e){
-    // console.log(e);
-    try {
-      var features = this.map.queryRenderedFeatures(e.point, {
-        layers: ["companies-fill"]
-      });
-      // console.log(features);
-      if (features.length) {
-        this.map.setFilter("companies-hover", ["==", "new_engine", features[0].properties.new_engine]);
-      }else{
-        this.map.setFilter("companies-hover", ["==", "new_engine", ""]);
-        features = map.queryRenderedFeatures(e.point, {
-          layers: ["districts-fill"]
-        });
-        if (features.length) {
-          this.map.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
-        }else{
-          this.map.setFilter("districts-hover", ["==", "company_di", ""]);
-          console.log('no feature');
-        }
-      }
-      this.map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-    } catch (e) {
-      console.log("Error: " + e);
-    }
+    console.log(this.currentState.layers);
   }
   static getMap(){
     return this.map;

@@ -387,6 +387,19 @@ main {
     display: none; }
   main .companies-snapshots.active {
     display: block; }
+  main .blocks-body {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%; }
+    main .blocks-body .block {
+      width: 33.3334%;
+      display: flex;
+      padding: 2em; }
+      main .blocks-body .block article {
+        margin: auto;
+        text-align: center; }
+    main .blocks-body .block:nth-child(even) {
+      background-color: #9fd5b3; }
   main .loading-box {
     text-align: center;
     font-size: 2em;

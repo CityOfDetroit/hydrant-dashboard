@@ -3,11 +3,11 @@ import Controller from './controller.class.js';
 import Connector from './connector.class.js';
 (function(){
   let controller = new Controller({
-    styleURL: 'mapbox://styles/cityofdetroit',
+    styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,
     baseLayers: {
-      street: 'cj7w0s5do3kj82rpcsqovntai',
+      street: 'streets-v10',
       satellite: 'cj774gftq3bwr2so2y6nqzvz4'
     },
     center: [-83.10, 42.36],
@@ -162,7 +162,16 @@ import Connector from './connector.class.js';
             this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
           }else{
             this.setFilter("districts-hover", ["==", "company_di", ""]);
-            // console.log('no feature');
+            if (this.getLayer("not-inspected-hydrants")) {
+              features = this.queryRenderedFeatures(e.point, {
+                layers: ["not-inspected-hydrants"]
+              });
+              if (!features.length) {
+                features = this.queryRenderedFeatures(e.point, {
+                  layers: ["inspected-hydrants"]
+                });
+              }
+            }
           }
         }
       }
@@ -188,7 +197,25 @@ import Connector from './connector.class.js';
             console.log(features);
             controller.filterData(features, controller);
           }else{
-            console.log('no feature');
+            if (this.getLayer("not-inspected-hydrants")) {
+              features = this.queryRenderedFeatures(e.point, {
+                layers: ["not-inspected-hydrants"]
+              });
+              if (features.length) {
+                console.log(features);
+                controller.filterData(features, controller);
+              }else{
+                features = this.queryRenderedFeatures(e.point, {
+                  layers: ["inspected-hydrants"]
+                });
+                if (features.length) {
+                  console.log(features);
+                  controller.filterData(features, controller);
+                }else{
+                  console.log('no feature');
+                }
+              }
+            }
           }
         }
       }

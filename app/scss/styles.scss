@@ -299,25 +299,6 @@ ul {
   cursor: pointer;
 }
 
-
-
-
-// .breadcrumbs a {
-// 	padding: 5px;
-// }
-// .breadcrumbs a:before,
-// .breadcrumbs a:after {
-// 	border-top-width: 16px;
-// 	border-bottom-width: 16px;
-// 	border-left-width: 8px;
-// }
-// .breadcrumbs li a span:first-child {
-// 	display: block;
-// 	margin: 0 auto;
-// }
-// .breadcrumbs li a span:last-child {
-// 	display: none;
-// }
 // ====================== mobile end ========================
 @media all and (min-width: 401px) {
 	#menu,.menu,.nav{
@@ -512,6 +493,25 @@ main {
   }
   .companies-snapshots.active{
     display: block;
+  }
+  .blocks-body{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    
+    .block{
+      width: 33.3334%;
+      display: flex;
+      padding: 2em;
+      
+      article{
+        margin: auto;
+        text-align: center;
+      }
+    }
+    .block:nth-child(even){
+      background-color: $color-3;
+    }
   }
   .loading-box{
     text-align: center;

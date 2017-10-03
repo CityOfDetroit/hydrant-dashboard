@@ -13,7 +13,7 @@ export default class Controller {
       currentActiveView: 'city',
       selectedCompany: null,
       selectedDistrict: null,
-      seelectedHydrant: null
+      selectedHydrant: null
     };
     this.validation = null;
     this.token = null;
@@ -33,85 +33,85 @@ export default class Controller {
             tempHTML += '<option value="' + company.properties.new_engine + '"></option>';
           });
           document.getElementById("company-list").innerHTML = tempHTML;
-          tempParent.companyList = JSON.parse(response).features;
-          let date = new Date();
-          date.setDate(date.getDate() - tempParent.time);
-          let past30 = date.toISOString().split('T')[0];
-          let today = new Date();
-          let dd = today.getDate();
-          let mm = today.getMonth()+1; //January is 0!
-          let yyyy = today.getFullYear();
-          today = yyyy + '-' + mm + '-' + dd;
-          let surveyed = 0;
-          let total = 0;
-          let tempSnaps = '';
-          tempParent.companyList.forEach(function(company){
-            let companySurveyed = 0;
-            let companyTotals = 0;
-            let simplifiedPolygon = turf(company, 0.003, false);
-            let arcPolygon = arcGIS.convert(simplifiedPolygon.geometry);
-            let params1 = {
-              token : Controller.getToken(),
-              where: "INSPECTDT BETWEEN '"+ past30 +"' AND '"+ today +"'",
-              geometry: JSON.stringify(arcPolygon),
-              geometryType: 'esriGeometryPolygon',
-              spatialRel: 'esriSpatialRelIntersects',
-              outFields: '*',
-              returnGeometry: true,
-              returnTrueCurves: false,
-              returnIdsOnly: false,
-              returnCountOnly: false,
-              orderByFields: 'INSPECTDT DESC',
-              returnZ: false,
-              returnM: false,
-              returnDistinctValues: false,
-              f: 'json'
-            }
-            Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params1, function(response){
-              companySurveyed = JSON.parse(response).features.length;
-              surveyed +=  JSON.parse(response).features.length;
-              let params2 = {
-                token : Controller.getToken(),
-                geometry: JSON.stringify(arcPolygon),
-                geometryType: 'esriGeometryPolygon',
-                spatialRel: 'esriSpatialRelIntersects',
-                outFields: '*',
-                returnGeometry: true,
-                returnTrueCurves: false,
-                returnIdsOnly: false,
-                returnCountOnly: true,
-                returnZ: false,
-                returnM: false,
-                returnDistinctValues: false,
-                f: 'json'
-              }
-              Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params2, function(response){
-                companyTotals = JSON.parse(response).count;
-                total += JSON.parse(response).count;
-                tempSnaps += '<article class="snap"><label for="'+ company.properties.new_engine +'" class="tooltip--triangle" data-tooltip="'+ companySurveyed +'/'+ companyTotals +'"><span>' + company.properties.new_engine + '</span><div id="'+ company.properties.new_engine +'" ';
-                switch (true) {
-                  case (companySurveyed/companyTotals) < .25:
-                    tempSnaps += 'class="progress zero">';
-                    break;
-                  case ((companySurveyed/companyTotals) >= .25 && (companySurveyed/companyTotals) < .5):
-                    tempSnaps += 'class="progress twenty-five">';
-                    break;
-                  case ((companySurveyed/companyTotals) >= .5 && (companySurveyed/companyTotals) < .75):
-                    tempSnaps += 'class="progress fifty">';
-                    break;
-                  case ((companySurveyed/companyTotals) >= .75 && (companySurveyed/companyTotals) < 1):
-                    tempSnaps += 'class="progress seventy-five">';
-                    break;
-                  default:
-                    tempSnaps += 'class="progress hundred">';
-                }
-                tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((companySurveyed/companyTotals) * 100) + '</div></div></div></label></article>';
-                document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
-                document.getElementById('surveyed-num').innerHTML = surveyed;
-                document.getElementById('not-surveyed-num').innerHTML = total - surveyed;
-              });
-            });
-          });
+          // tempParent.companyList = JSON.parse(response).features;
+          // let date = new Date();
+          // date.setDate(date.getDate() - tempParent.time);
+          // let past30 = date.toISOString().split('T')[0];
+          // let today = new Date();
+          // let dd = today.getDate();
+          // let mm = today.getMonth()+1; //January is 0!
+          // let yyyy = today.getFullYear();
+          // today = yyyy + '-' + mm + '-' + dd;
+          // let surveyed = 0;
+          // let total = 0;
+          // let tempSnaps = '';
+          // tempParent.companyList.forEach(function(company){
+          //   let companySurveyed = 0;
+          //   let companyTotals = 0;
+          //   let simplifiedPolygon = turf(company, 0.003, false);
+          //   let arcPolygon = arcGIS.convert(simplifiedPolygon.geometry);
+          //   let params1 = {
+          //     token : Controller.getToken(),
+          //     where: "INSPECTDT BETWEEN '"+ past30 +"' AND '"+ today +"'",
+          //     geometry: JSON.stringify(arcPolygon),
+          //     geometryType: 'esriGeometryPolygon',
+          //     spatialRel: 'esriSpatialRelIntersects',
+          //     outFields: '*',
+          //     returnGeometry: true,
+          //     returnTrueCurves: false,
+          //     returnIdsOnly: false,
+          //     returnCountOnly: false,
+          //     orderByFields: 'INSPECTDT DESC',
+          //     returnZ: false,
+          //     returnM: false,
+          //     returnDistinctValues: false,
+          //     f: 'json'
+          //   }
+          //   Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params1, function(response){
+          //     companySurveyed = JSON.parse(response).features.length;
+          //     surveyed +=  JSON.parse(response).features.length;
+          //     let params2 = {
+          //       token : Controller.getToken(),
+          //       geometry: JSON.stringify(arcPolygon),
+          //       geometryType: 'esriGeometryPolygon',
+          //       spatialRel: 'esriSpatialRelIntersects',
+          //       outFields: '*',
+          //       returnGeometry: true,
+          //       returnTrueCurves: false,
+          //       returnIdsOnly: false,
+          //       returnCountOnly: true,
+          //       returnZ: false,
+          //       returnM: false,
+          //       returnDistinctValues: false,
+          //       f: 'json'
+          //     }
+          //     Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params2, function(response){
+          //       companyTotals = JSON.parse(response).count;
+          //       total += JSON.parse(response).count;
+          //       tempSnaps += '<article class="snap"><label for="'+ company.properties.new_engine +'" class="tooltip--triangle" data-tooltip="'+ companySurveyed +'/'+ companyTotals +'"><span>' + company.properties.new_engine + '</span><div id="'+ company.properties.new_engine +'" ';
+          //       switch (true) {
+          //         case (companySurveyed/companyTotals) < .25:
+          //           tempSnaps += 'class="progress zero">';
+          //           break;
+          //         case ((companySurveyed/companyTotals) >= .25 && (companySurveyed/companyTotals) < .5):
+          //           tempSnaps += 'class="progress twenty-five">';
+          //           break;
+          //         case ((companySurveyed/companyTotals) >= .5 && (companySurveyed/companyTotals) < .75):
+          //           tempSnaps += 'class="progress fifty">';
+          //           break;
+          //         case ((companySurveyed/companyTotals) >= .75 && (companySurveyed/companyTotals) < 1):
+          //           tempSnaps += 'class="progress seventy-five">';
+          //           break;
+          //         default:
+          //           tempSnaps += 'class="progress hundred">';
+          //       }
+          //       tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((companySurveyed/companyTotals) * 100) + '</div></div></div></label></article>';
+          //       document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
+          //       document.getElementById('surveyed-num').innerHTML = surveyed;
+          //       document.getElementById('not-surveyed-num').innerHTML = total - surveyed;
+          //     });
+          //   });
+          // });
         });
       });
     });
@@ -229,6 +229,8 @@ export default class Controller {
             }
         });
     });
+    document.querySelector('.tabular-titles').innerHTML = "<div>ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
+    document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span>City</span></a></li><li><a href="#"><span>2</span><span>Company - '+ controller.state.selectedCompany +'</span></a></li><li><a href="#"><span>3</span><span>District - '+ district +'</span></a></li>';
     
     let params = {
@@ -254,8 +256,15 @@ export default class Controller {
         "type": "FeatureCollection",
         "features": []
       };
-      responseObj.features.forEach(function(hydrant){
-        hydrantList.features.push({
+      let startEpoc = ((new Date(startDate)).getTime()) /1000;
+      let endEpoc = ((new Date(endDate)).getTime()) /1000;
+      let tempBody = '';
+      let inspectedNum = 0;
+      let notInspectedNum = 0;
+      console.log(startEpoc);
+      console.log(endEpoc);
+      responseObj.features.forEach(function(hydrant, index){
+        let temHydrantObj = {
           "type": "Feature",
           "geometry": {
             "type": "Point",
@@ -265,14 +274,93 @@ export default class Controller {
             ]
           },
           "properties": {
-            ID: hydrant.attributes.HYDRANTID,
-            condition: hydrant.attributes.CONDITION,
+            ID: hydrant.attributes.OBJECTID,
+            hydrantID: hydrant.attributes.HYDRANTID,
             inspectedOn: hydrant.attributes.INSPECTDT,
             address: hydrant.attributes.LOCDESC,
-            notes: hydrant.attributes.NOTES
+            notes: hydrant.attributes.NOTES,
+            inspectionStatus: null,
+            facility: hydrant.attributes.FACILITYID,
+            fireDistrict: hydrant.attributes.FIREDISTID,
+            grid: hydrant.attributes.GRIDNUM,
+            operable: hydrant.attributes.OPERABLE,
+            flowed: hydrant.attributes.FLOWED,
+            noFlow: hydrant.attributes.NOFLOW,
+            brokenStem: hydrant.attributes.BROKESTEM,
+            frostJack: hydrant.attributes.FROSTJACK,
+            hydrantCap: hydrant.attributes.HYDCAP,
+            hydrantDrain: hydrant.attributes.HYDDRAIN,
+            defectiveThread: hydrant.attributes.DEFTHREAD,
+            leaking: hydrant.attributes.LEAKING,
+            chatter: hydrant.attributes.CHATTER,
+            frozen: hydrant.attributes.FROZEN,
+            nearCriticalFacility: hydrant.attributes.CRITICALFAC,
+            hardToOpen: hydrant.attributes.HARDOPEN,
+            hardToClose: hydrant.attributes.HARDCLOSE,
+            hitByVehicle: hydrant.attributes.HITVEHICLE,
+            missing: hydrant.attributes.MISSHYDRANT,
+            installDate: hydrant.attributes.INSTALLDATE,
+            manufacturer: hydrant.attributes.MANUFACTURER,
+            model: hydrant.attributes.HYDMODEL,
+            castingYear: hydrant.attributes.CASTYEAR,
+            activeFlag: hydrant.attributes.ACTIVEFLAG,
+            ownedBy: hydrant.attributes.OWNEDBY,
+            maintainedBy: hydrant.attributes.MAINTBY,
+            lastUpdate: hydrant.attributes.LASTUPDATE,
+            lastEditor: hydrant.attributes.LASTEDITOR,
+            hydrantTYP: hydrant.attributes.HYDRANTTYP,
+            status: hydrant.attributes.STATUS,
+            condition: hydrant.attributes.CONDITION,
+            security: hydrant.attributes.SECURITY,
+            facingCorridor: hydrant.attributes.FACINGCORR,
+            operateNut: hydrant.attributes.OPERATENUT,
+            photo: hydrant.attributes.PHOTO,
+            x: hydrant.attributes.XCOORDI,
+            y: hydrant.attributes.YCOORDI,
+            ownership: hydrant.attributes.OWNERSHIP,
+            district: hydrant.attributes.DISTRICT,
+            pressure: hydrant.attributes.PRESSUREZO,
+            barrelDiameter: hydrant.attributes.BARRELDIAM,
+            crossStreet: hydrant.attributes.CROSSTREET,
+            mainSize: hydrant.attributes.WMAINSIZE,
+            distanceToCrossStreet: hydrant.attributes.DISTTOCROSSST,
+            createdBy: hydrant.attributes.CREATEDBY,
+            createdDate: hydrant.attributes.CREATEDATE,
+            createdUser: hydrant.attributes.CREATED_USER,
+            lastEditedUser: hydrant.attributes.LAST_EDITED_USER,
+            lastEditedDate: hydrant.attributes.LAST_EDITED_DATE,
+            priority: hydrant.attributes.CUSTOMPRIORITY,
+            lowFlow: hydrant.attributes.LowFlow,
+            inaccessibleHydrant: hydrant.attributes.InaccessibleHydrant,
+            carrollDrain: hydrant.attributes.CarrollDrain,
+            lastPaintDate: hydrant.attributes.LASTPAINTDATE,
+            hydrantValveLock: hydrant.attributes.HYDRANTVALVELOC,
+            operatedBy: hydrant.attributes.OPERATEDBY,
+            pressureTestFail: hydrant.attributes.HYD_PRESS_TEST_FAIL,
+            pressureTestFailReason: hydrant.attributes.PRESSTESTFAILREASON,
+            flushing: hydrant.attributes.HYD_FLUSHING,
+            DeadEndHydrant: hydrant.attributes.DeadEndHydrant,
+            missingChains: hydrant.attributes.MISSINGCHAINS,
+            needsPainting: hydrant.attributes.NEEDSPAINTING,
+            seizedCaps: hydrant.attributes.SEIZEDCAPS,
+            greased: hydrant.attributes.GREASED
           }
-        });
+        };
+        tempBody += "<article id=\"row-"+ index +"\" class=\"tabular-row ";
+        if(hydrant.attributes.INSPECTDT >= startEpoc && hydrant.attributes.INSPECTDT <= endEpoc){
+          inspectedNum++;
+          tempBody += "inspected-true\"><div>" + hydrant.attributes.HYDRANTID + "</div><div>" + hydrant.attributes.LOCDESC + "</div><div>" + hydrant.attributes.CONDITION + "</div><div>TRUE</div><div>" + hydrant.attributes.NOTES + "</div></article>";
+          temHydrantObj.properties.inspectionStatus = true;
+        }else{
+          notInspectedNum++;
+          tempBody += "inspected-false\"><div>" + hydrant.attributes.HYDRANTID + "</div><div>" + hydrant.attributes.LOCDESC + "</div><div>" + hydrant.attributes.CONDITION + "</div><div>FALSE</div><div>" + hydrant.attributes.NOTES + "</div></article>";
+          temHydrantObj.properties.inspectionStatus = false;
+        }
+        hydrantList.features.push(temHydrantObj);
       });
+      document.querySelector('.tabular-body').innerHTML = tempBody;
+      document.querySelector('#surveyed-num').innerHTML = inspectedNum;
+      document.querySelector('#not-surveyed-num').innerHTML = notInspectedNum;
       if(controller.map.map.getSource('hydrants')){
         console.log("Updating hydrants");
         controller.map.map.getSource('hydrants').setData(hydrantList);
@@ -284,28 +372,84 @@ export default class Controller {
         });
         controller.map.map.loadImage('img/fire-hydrant-blue.png', function(error, image) {
           if (error) throw error;
-          controller.map.map.addImage('hydrant', image);
+          controller.map.map.addImage('inspected-hydrant', image);
           controller.map.map.addLayer({
-              "id": "hydrants",
+              "id": "inspected-hydrants",
               "type": "symbol",
               "source": 'hydrants',
               "layout": {
-                  "icon-image": "hydrant",
+                  "icon-image": "inspected-hydrant",
                   "icon-size": 0.5
-              }
+              },
+              'filter': ['==', 'inspectionStatus', true]
+          });
+        });
+        controller.map.map.loadImage('img/fire-hydrant-red.png', function(error, image) {
+          if (error) throw error;
+          controller.map.map.addImage('not-inspected-hydrant', image);
+          controller.map.map.addLayer({
+              "id": "not-inspected-hydrants",
+              "type": "symbol",
+              "source": 'hydrants',
+              "layout": {
+                  "icon-image": "not-inspected-hydrant",
+                  "icon-size": 0.5
+              },
+              'filter': ['==', 'inspectionStatus', false]
           });
         });
       }
-      // tempDistrict.surveyed = JSON.parse(response).features.length;
-      // tempDistrict.notSurveyed = tempDistrict.hydrants - JSON.parse(response).features.length;
-      // tempRowHtml += "<div>"+ tempDistrict.name +"</div><div>"+ tempDistrict.surveyed +"</div><div>" + tempDistrict.notSurveyed + "</div></article>";
-      // tempTabBody += tempRowHtml;
-      // totalSurveyed += tempDistrict.surveyed;
-      // totalNotSurved += tempDistrict.notSurveyed;
-      // document.querySelector('.tabular-body').innerHTML = tempTabBody;
-      // document.getElementById('surveyed-num').innerHTML = totalSurveyed;
-      // document.getElementById('not-surveyed-num').innerHTML = totalNotSurved;
     });
+  }
+  filterByHydrant(hydrant, controller){
+    console.log(hydrant);
+    document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span>City</span></a></li><li><a href="#"><span>2</span><span>Company - '+ controller.state.selectedCompany +'</span></a></li><li><a href="#"><span>3</span><span>District - '+ controller.state.selectedDistrict +'</span></a></li><li><a href="#"><span>4</span><span>Hydrant - '+ hydrant.properties.hydrantID +'</span></a></li>';
+    controller.state.selectedHydrant = hydrant.properties.hydrantID;
+    document.querySelector('.tabular-titles').innerHTML = '';
+    document.querySelector('.tabular-body').innerHTML = '';
+    document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>HYDRANT ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + hydrant.properties.inspectedOn + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + hydrant.properties.notes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>FACILITY</h4><p>' + hydrant.properties.facility + '</p></article></article></article><article class="block"><article><h4>FIRE DISTRICT</h4><p>' + hydrant.properties.fireDistrict + '</p></article></article></article><article class="block"><article><h4>GRID</h4><p>' + hydrant.properties.grid + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article><article class="block"><article><h4>FLOWED</h4><p>' + hydrant.properties.flowed + '</p></article></article></article><article class="block"><article><h4>NO FLOW</h4><p>' + hydrant.properties.noFlow + '</p></article></article></article><article class="block"><article><h4>BROKEN STEM</h4><p>' + hydrant.properties.brokenStem + '</p></article></article></article><article class="block"><article><h4>HYDRANT CAP</h4><p>' + hydrant.properties.hydrantCap + '</p></article></article></article><article class="block"><article><h4>HYDRANT DRAIN</h4><p>' + hydrant.properties.hydrantDrain + '</p></article></article></article><article class="block"><article><h4>DEFECTIVE THREAD</h4><p>' + hydrant.properties.defectiveThread + '</p></article></article></article><article class="block"><article><h4>LEAKING</h4><p>' + hydrant.properties.leaking + '</p></article></article></article><article class="block"><article><h4>CHATTER</h4><p>' + hydrant.properties.chatter + '</p></article></article></article><article class="block"><article><h4>FROZEN</h4><p>' + hydrant.properties.frozen + '</p></article></article></article><article class="block"><article><h4>NEAR CRITICAL FACILITY</h4><p>' + hydrant.properties.nearCriticalFacility + '</p></article></article><article class="block"><article><h4>HARD TO OPEN</h4><p>' + hydrant.properties.hardToOpen + '</p></article></article><article class="block"><article><h4>HARD TO CLOSE</h4><p>' + hydrant.properties.hardToClose + '</p></article></article><article class="block"><article><h4>HIT BY VEHICLE</h4><p>' + hydrant.properties.hitByVehicle + '</p></article></article><article class="block"><article><h4>MISSING</h4><p>' + hydrant.properties.missing + '</p></article></article><article class="block"><article><h4>INSTALL DATE</h4><p>' + hydrant.properties.installDate + '</p></article></article><article class="block"><article><h4>MANUFACTURER</h4><p>' + hydrant.properties.manufacturer + '</p></article></article><article class="block"><article><h4>MODEL</h4><p>' + hydrant.properties.model + '</p></article></article><article class="block"><article><h4>CASTING YEAR</h4><p>' + hydrant.properties.castingYear + '</p></article></article><article class="block"><article><h4>ACTIVE FLAG</h4><p>' + hydrant.properties.activeFlag + '</p></article></article>';
+  
+  
+    // ownedBy: hydrant.attributes.OWNEDBY,
+    // maintainedBy: hydrant.attributes.MAINTBY,
+    // lastUpdate: hydrant.attributes.LASTUPDATE,
+    // lastEditor: hydrant.attributes.LASTEDITOR,
+    // hydrantTYP: hydrant.attributes.HYDRANTTYP,
+    // status: hydrant.attributes.STATUS,
+    // condition: hydrant.attributes.CONDITION,
+    // security: hydrant.attributes.SECURITY,
+    // facingCorridor: hydrant.attributes.FACINGCORR,
+    // operateNut: hydrant.attributes.OPERATENUT,
+    // photo: hydrant.attributes.PHOTO,
+    // x: hydrant.attributes.XCOORDI,
+    // y: hydrant.attributes.YCOORDI,
+    // ownership: hydrant.attributes.OWNERSHIP,
+    // district: hydrant.attributes.DISTRICT,
+    // pressure: hydrant.attributes.PRESSUREZO,
+    // barrelDiameter: hydrant.attributes.BARRELDIAM,
+    // crossStreet: hydrant.attributes.CROSSTREET,
+    // mainSize: hydrant.attributes.WMAINSIZE,
+    // distanceToCrossStreet: hydrant.attributes.DISTTOCROSSST,
+    // createdBy: hydrant.attributes.CREATEDBY,
+    // createdDate: hydrant.attributes.CREATEDATE,
+    // createdUser: hydrant.attributes.CREATED_USER,
+    // lastEditedUser: hydrant.attributes.LAST_EDITED_USER,
+    // lastEditedDate: hydrant.attributes.LAST_EDITED_DATE,
+    // priority: hydrant.attributes.CUSTOMPRIORITY,
+    // lowFlow: hydrant.attributes.LowFlow,
+    // inaccessibleHydrant: hydrant.attributes.InaccessibleHydrant,
+    // carrollDrain: hydrant.attributes.CarrollDrain,
+    // lastPaintDate: hydrant.attributes.LASTPAINTDATE,
+    // hydrantValveLock: hydrant.attributes.HYDRANTVALVELOC,
+    // operatedBy: hydrant.attributes.OPERATEDBY,
+    // pressureTestFail: hydrant.attributes.HYD_PRESS_TEST_FAIL,
+    // pressureTestFailReason: hydrant.attributes.PRESSTESTFAILREASON,
+    // flushing: hydrant.attributes.HYD_FLUSHING,
+    // DeadEndHydrant: hydrant.attributes.DeadEndHydrant,
+    // missingChains: hydrant.attributes.MISSINGCHAINS,
+    // needsPainting: hydrant.attributes.NEEDSPAINTING,
+    // seizedCaps: hydrant.attributes.SEIZEDCAPS,
+    // greased: hydrant.attributes.GREASED,
   }
   filterData(e, controller){
     let tempParent = this;
@@ -321,6 +465,7 @@ export default class Controller {
       let mm = startDate.getMonth()+1; //January is 0!
       let yyyy = startDate.getFullYear();
       startDate = yyyy + '-' + mm + '-' + dd;
+      console.log(e[0].layer.id);
       switch (e[0].layer.id) {
         case "companies-fill":
           polygon = e[0].properties.new_engine;
@@ -331,7 +476,7 @@ export default class Controller {
           controller.filterByDistrict(startDate,endDate,polygon,controller);
           break;
         default:
-          
+          controller.filterByHydrant(e[0],controller);
       }
     }else{
       startDate = document.getElementById('start-date').value;

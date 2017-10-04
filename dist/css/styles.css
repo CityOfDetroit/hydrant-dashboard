@@ -383,6 +383,13 @@ main {
       font-weight: bold; }
   main .tabular-body .tabular-row:nth-child(even) {
     background-color: #9fd5b3; }
+  main .tabular-body .tabular-row .not-inspected {
+    cursor: pointer;
+    transition: all .2s ease-in-out; }
+  main .tabular-body .tabular-row .not-inspected:hover {
+    background-color: #004544;
+    color: #9fd5b3;
+    transition: all .2s ease-in-out; }
   main .companies-snapshots {
     display: none; }
   main .companies-snapshots.active {

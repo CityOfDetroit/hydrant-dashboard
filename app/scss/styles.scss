@@ -487,6 +487,17 @@ main {
 		.tabular-row:nth-child(even){
 			background-color:$color-3;
 		}
+    .tabular-row{
+      .not-inspected{
+        cursor: pointer;
+        transition: all .2s ease-in-out;
+      }
+      .not-inspected:hover{
+        background-color: $color-1;
+        color: $color-3;
+        transition: all .2s ease-in-out;
+      }
+    }
 	}
   .companies-snapshots{
     display: none;
@@ -498,12 +509,12 @@ main {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    
+
     .block{
       width: 33.3334%;
       display: flex;
       padding: 2em;
-      
+
       article{
         margin: auto;
         text-align: center;

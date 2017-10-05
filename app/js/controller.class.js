@@ -11,16 +11,23 @@ export default class Controller {
       start: start,
       end: end
     }
-    this.data = null;
+    this.cityData = {
+      companies: null,
+      hydrants: null
+    };
     this.time = 30,
     this.map = new Map(init);
     this.state = {
       currentActiveView: 'city',
       selectedCompany: {
         name: null,
-        data: null
+        data: null,
+        geometry: null
       },
-      selectedDistrict: null,
+      selectedDistrict: {
+        name: null,
+        geometry: null
+      },
       selectedHydrant: null
     };
     this.validation = null;
@@ -28,63 +35,86 @@ export default class Controller {
     this.companyList = null;
     this.initialLoad();
   }
-  initialLoad(controller){
+  initialLoad(){
     let tempParent = this;
-    document.querySelector('.companies-snapshots.active').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     Connector.getData('../private/login.json', function(response){
       Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response), function(response){
         Controller.setToken(response);
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
           console.log(JSON.parse(response));
           let tempHTML = "";
-          let companyListing = {};
+          tempParent.cityData.companies = {};
           JSON.parse(response).features.forEach(function(company){
             tempHTML += '<option value="' + company.properties.new_engine + '"></option>';
-            companyListing[""+ company.properties.new_engine] =  {inspected: 0, total: 0};
+            tempParent.cityData.companies[""+ company.properties.new_engine] =  {inspected: 0, total: 0};
           });
           document.getElementById("company-list").innerHTML = tempHTML;
           Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
-            tempParent.data = JSON.parse(response);
-            console.log(tempParent.data);
-            JSON.parse(response).data.features.forEach(function(hydrant){
-              let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
-              if(companyListing[tempCompanyName]){
-                if(hydrant.attributes.INSPECTDT >= tempParent.surveyPeriod.start && hydrant.attributes.INSPECTDT <= tempParent.surveyPeriod.end){
-                  companyListing[tempCompanyName].inspected++;
-                }
-                companyListing[tempCompanyName].total++;
-              }
-            });
-            let tempSnaps = "";
-            let totalInspected = 0;
-            for(let comp in companyListing){
-              totalInspected += companyListing[comp].inspected;
-              tempSnaps += '<article class="snap"><label for="'+ comp +'" class="tooltip--triangle" data-tooltip="'+ companyListing[comp].inspected +'/'+ companyListing[comp].total +'"><span>' + comp + '</span><div id="'+ comp +'" ';
-              switch (true) {
-                case (companyListing[comp].inspected/companyListing[comp].total) < .25:
-                  tempSnaps += 'class="progress zero">';
-                  break;
-                case ((companyListing[comp].inspected/companyListing[comp].total) >= .25 && (companyListing[comp].inspected/companyListing[comp].total) < .5):
-                  tempSnaps += 'class="progress twenty-five">';
-                  break;
-                case ((companyListing[comp].inspected/companyListing[comp].total) >= .5 && (companyListing[comp].inspected/companyListing[comp].total) < .75):
-                  tempSnaps += 'class="progress fifty">';
-                  break;
-                case ((companyListing[comp].inspected/companyListing[comp].total) >= .75 && (companyListing[comp].inspected/companyListing[comp].total) < 1):
-                  tempSnaps += 'class="progress seventy-five">';
-                  break;
-                default:
-                  tempSnaps += 'class="progress hundred">';
-              }
-              tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((companyListing[comp].inspected/companyListing[comp].total) * 100) + '</div></div></div></label></article>';
-            }
-            document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
-            document.getElementById('surveyed-num').innerHTML = totalInspected;
-            document.getElementById('not-surveyed-num').innerHTML = JSON.parse(response).data.features.length - totalInspected;
+            tempParent.cityData.hydrants = JSON.parse(response);
+            tempParent.loadCityData(tempParent);
           });
         });
       });
     });
+  }
+  loadCityData(controller){
+    document.querySelector('.tabular-titles').innerHTML = "";
+    document.querySelector('.tabular-body').innerHTML = '';
+    document.querySelector('.blocks-body').innerHTML = "";
+    document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li>';
+    document.querySelector('.companies-snapshots.active').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
+    controller.map.map.flyTo({
+        center: [-83.10, 42.36],
+        zoom: 10.75,
+        bearing: 0,
+
+        // These options control the flight curve, making it move
+        // slowly and zoom out almost completely before starting
+        // to pan.
+        speed: 2, // make the flying slow
+        curve: 1, // change the speed at which it zooms out
+
+        // This can be any easing function: it takes a number between
+        // 0 and 1 and returns another number between 0 and 1.
+        easing: function (t) {
+            return t;
+        }
+    });
+    controller.cityData.hydrants.data.features.forEach(function(hydrant){
+      let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
+      if(controller.cityData.companies[tempCompanyName]){
+        if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
+          controller.cityData.companies[tempCompanyName].inspected++;
+        }
+        controller.cityData.companies[tempCompanyName].total++;
+      }
+    });
+    let tempSnaps = "";
+    let totalInspected = 0;
+    for(let comp in controller.cityData.companies){
+      totalInspected += controller.cityData.companies[comp].inspected;
+      tempSnaps += '<article class="snap"><label for="'+ comp +'" class="tooltip--triangle" data-tooltip="'+ controller.cityData.companies[comp].inspected +'/'+ controller.cityData.companies[comp].total +'"><span>' + comp + '</span><div id="'+ comp +'" ';
+      switch (true) {
+        case (controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) < .25:
+          tempSnaps += 'class="progress zero">';
+          break;
+        case ((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) >= .25 && (controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) < .5):
+          tempSnaps += 'class="progress twenty-five">';
+          break;
+        case ((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) >= .5 && (controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) < .75):
+          tempSnaps += 'class="progress fifty">';
+          break;
+        case ((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) >= .75 && (controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) < 1):
+          tempSnaps += 'class="progress seventy-five">';
+          break;
+        default:
+          tempSnaps += 'class="progress hundred">';
+      }
+      tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) * 100) + '</div></div></div></label></article>';
+    }
+    document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
+    document.getElementById('surveyed-num').innerHTML = totalInspected;
+    document.getElementById('not-surveyed-num').innerHTML = controller.cityData.hydrants.data.features.length - totalInspected;
   }
   closeAlert(){
     document.getElementById('alert-overlay').className = '';
@@ -94,39 +124,54 @@ export default class Controller {
     let item = null;
     if(prev.target.tagName === "A"){
       viewType = prev.target.children[1].innerText.split('-')[0].trim();
-      (item = prev.target.children[1].innerText.split('-')[1] === undefined) ? 0 : item = prev.target.children[1].innerText.split('-')[1].trim();
+      if(viewType === "District"){
+        (item = prev.target.children[1].innerText.split('-')[1] === undefined) ? 0 : item = prev.target.children[1].innerText.split('-')[1].trim() + "-" + prev.target.children[1].innerText.split('-')[2].trim();
+      }else{
+        (item = prev.target.children[1].innerText.split('-')[1] === undefined) ? 0 : item = prev.target.children[1].innerText.split('-')[1].trim();
+      }
     }else{
       if(prev.target.className === ""){
         viewType = prev.target.nextSibling.innerText.split('-')[0].trim();
-        (item = prev.target.nextSibling.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.nextSibling.innerText.split('-')[1].trim();
+        if(viewType === "District"){
+          (item = prev.target.nextSibling.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.nextSibling.innerText.split('-')[1].trim() + "-" + prev.target.nextSibling.innerText.split('-')[2].trim();
+        }else{
+          (item = prev.target.nextSibling.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.nextSibling.innerText.split('-')[1].trim();
+        }
       }else{
         viewType = prev.target.innerText.split('-')[0].trim();
-        (item = prev.target.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.innerText.split('-')[1].trim();
+        if(viewType === "District"){
+          (item = prev.target.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.innerText.split('-')[1].trim() + "-" + prev.target.innerText.split('-')[2].trim();
+        }else{
+          (item = prev.target.innerText.split('-')[1] === undefined) ? 0 : item = prev.target.innerText.split('-')[1].trim();
+        }
       }
     }
     console.log(viewType);
     console.log(item);
     let tmpObj = [{
-      layer{
+      layer: {
         id: null
       },
-      properties{
+      properties: {
 
       }
     }];
     switch (viewType) {
       case 'City':
-        tmpObj[0].layer.id
+        tmpObj[0].layer.id = "city";
         break;
       case 'Company':
-
+        tmpObj[0].layer.id = "companies-fill";
+        tmpObj[0].properties.new_engine = item;
         break;
       case 'District':
-
+        tmpObj[0].layer.id = "districts-fill";
+        tmpObj[0].properties.company_di = item;
         break;
       default:
         console.log("Hydrant view can't go back");
     }
+    controller.filterData(tmpObj, controller);
   }
   filterData(e, controller){
     let tempParent = this;
@@ -136,6 +181,9 @@ export default class Controller {
     if(Array.isArray(e)){
       console.log(e[0].layer.id);
       switch (e[0].layer.id) {
+        case 'city':
+          controller.loadCityData(controller);
+          break;
         case "companies-fill":
           polygon = e[0].properties.new_engine;
           controller.filterByCompany(polygon,controller);
@@ -174,7 +222,8 @@ export default class Controller {
     }
   }
   filterByCompany(company, controller){
-    document.querySelector('.companies-snapshots').className = "companies-snapshots";
+    document.querySelector('.blocks-body').innerHTML = "";
+    document.querySelector('.companies-snapshots.active').innerHTML = "";
     document.querySelector('.data-panel').className = "data-panel active";
     document.querySelector('.map-panel').className = "map-panel active";
     document.getElementById('surveyed-num').innerHTML = 0;
@@ -183,9 +232,10 @@ export default class Controller {
     controller.state.selectedCompany.name = company;
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=5So00jOfZyq3hcqvFzBlBd_84UfknMx26gj_s3tPSj0L1_yGnn6qcd_WvnNH6U-OiQzdYIqbk76nk76R_RJAkZSoYMDo2zPcXla9gGDcRha7mxvAt6ACpKgLMzgz7BLNWSrdgw9gIxTlKquL4OJMON6ukWwdIuKiztmQ5CTFLR0nVLdEpCkfzI912F5iLTFmHvrO7vDU6YklT1t4XBtfIQ2Y57xdJvcCNQE3qbqR2ESwldHo60rS5xEgVh-mg0np', function(response){
         let centerPoint = JSON.parse(response);
+        console.log(centerPoint);
         controller.map.map.flyTo({
             center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
-            zoom: 13,
+            zoom: 13.5,
             bearing: 0,
 
             // These options control the flight curve, making it move
@@ -224,7 +274,7 @@ export default class Controller {
         JSON.parse(response).features.forEach(function(district){
           districtListing["" + district.properties.company_di] = {inspected: 0, total: 0, notInspected: []};
         });
-        controller.data.data.features.forEach(function(hydrant){
+        controller.cityData.hydrants.data.features.forEach(function(hydrant){
           if(  districtListing[hydrant.attributes.FIREDISTID]){
             if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
               districtListing[hydrant.attributes.FIREDISTID].inspected++;
@@ -250,15 +300,17 @@ export default class Controller {
     });
   }
   filterByDistrict(district, controller){
-    document.querySelector('.companies-snapshots').className = "companies-snapshots";
+    document.querySelector('.blocks-body').innerHTML = "";
+    document.querySelector('.companies-snapshots.active').innerHTML = "";
     document.querySelector('.data-panel').className = "data-panel active";
     document.querySelector('.map-panel').className = "map-panel active";
     document.getElementById('surveyed-num').innerHTML = 0;
     document.getElementById('not-surveyed-num').innerHTML = 0;
     controller.state.currentActiveView = 'district';
-    controller.state.selectedDistrict = district;
+    controller.state.selectedDistrict.name = district;
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=q_I5u9NsU394TD1r8ivM2ABFGzDSpV4syF8RUojmiorqWmE1ILksZgi8homADnEBeGiCt0t5C1pzmyTbcj3_aNrpby5e_WK5zOz3lLi6vbmYHy7K4bXrCfRY0iDdv8FgWtP--BSlb6BEurVx3jaYtfl1BwsjCxMfaAgqhU9sm1RtQNyzj56zdjfXjQNb298d-1nBIaZDZ4JWYvzX1zwW_DiZ0paiP7zZElRxGsKrnWeu9oYjY-OtaAUYtPR9E-Zk', function(response){
         let centerPoint = JSON.parse(response);
+        console.log(centerPoint);
         controller.map.map.flyTo({
             center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
             zoom: 15.5,
@@ -426,6 +478,7 @@ export default class Controller {
               "id": "inspected-hydrants",
               "type": "symbol",
               "source": 'hydrants',
+              "minzoom": 15,
               "layout": {
                   "icon-image": "inspected-hydrant",
                   "icon-size": 0.5
@@ -440,6 +493,7 @@ export default class Controller {
               "id": "not-inspected-hydrants",
               "type": "symbol",
               "source": 'hydrants',
+              "minzoom": 15,
               "layout": {
                   "icon-image": "not-inspected-hydrant",
                   "icon-size": 0.5
@@ -452,7 +506,7 @@ export default class Controller {
   }
   filterByHydrant(hydrant, controller){
     console.log(hydrant);
-    document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ controller.state.selectedDistrict +'</span></a></li><li><a href="#"><span>4</span><span class="breadcrumb-title">Hydrant - '+ hydrant.properties.hydrantID +'</span></a></li>';
+    document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ controller.state.selectedDistrict.name +'</span></a></li><li><a href="#"><span>4</span><span class="breadcrumb-title">Hydrant - '+ hydrant.properties.hydrantID +'</span></a></li>';
     let breadcrumbs = document.querySelectorAll('.cf a');
     breadcrumbs.forEach(function(bread){
       bread.addEventListener('click', function(e){

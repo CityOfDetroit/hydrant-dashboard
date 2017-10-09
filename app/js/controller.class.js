@@ -39,7 +39,7 @@ export default class Controller {
     let tempParent = this;
     Connector.getData('../private/login.json', function(response){
       Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response), function(response){
-        Controller.setToken(response);
+        tempParent.token = response;
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
           console.log(JSON.parse(response));
           let tempHTML = "";
@@ -62,7 +62,7 @@ export default class Controller {
     document.querySelector('.tabular-body').innerHTML = '';
     document.querySelector('.blocks-body').innerHTML = "";
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li>';
-    document.querySelector('.companies-snapshots.active').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
+    // document.querySelector('.companies-snapshots.active').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     controller.map.map.flyTo({
         center: [-83.10, 42.36],
         zoom: 10.75,
@@ -110,14 +110,34 @@ export default class Controller {
         default:
           tempSnaps += 'class="progress hundred">';
       }
-      tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) * 100) + '</div></div></div></label></article>';
+      tempSnaps += '<div class="progress-bar"><div class="percentage">' + Math.trunc((controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) * 100) + '%</div></div></div></label></article>';
     }
     document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
-    document.getElementById('surveyed-num').innerHTML = totalInspected;
-    document.getElementById('not-surveyed-num').innerHTML = controller.cityData.hydrants.data.features.length - totalInspected;
+    document.getElementById('surveyed-num').innerHTML = totalInspected.toLocaleString();
+    document.getElementById('not-surveyed-num').innerHTML = (controller.cityData.hydrants.data.features.length - totalInspected).toLocaleString();
+    document.getElementById('initial-loader-overlay').className = '';
+    let bars = document.querySelectorAll('.progress');
+    bars.forEach(function(bar){
+      bar.addEventListener('click', function(ev){
+        console.log(ev);
+        controller.filterByCompany(ev.target.id, controller);
+      });
+    });
   }
-  closeAlert(){
-    document.getElementById('alert-overlay').className = '';
+  closeAlert(ev){
+    (ev.target.parentNode.parentNode.id === 'alert-overlay') ? document.getElementById('alert-overlay').className = '': document.getElementById('drill-down-overlay').className = '';
+  }
+  loadDrillDown(ev, controller){
+    console.log(ev);
+    console.log(ev.target.parentNode.id);
+    console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
+    let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
+    controller.state.selectedCompany.data[ev.target.parentNode.id].notInspected.forEach(function(hydrant){
+      let date = new Date(hydrant.attributes.INSPECTDT);
+      tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
+    });
+    document.querySelector('#drill-down-overlay div').innerHTML = tempHTML;
+    document.getElementById('drill-down-overlay').className = 'active';
   }
   loadPrevious(prev, controller){
     let viewType = null;
@@ -222,6 +242,7 @@ export default class Controller {
     }
   }
   filterByCompany(company, controller){
+    document.getElementById('initial-loader-overlay').className = 'active';
     document.querySelector('.blocks-body').innerHTML = "";
     document.querySelector('.companies-snapshots.active').innerHTML = "";
     document.querySelector('.data-panel').className = "data-panel active";
@@ -230,7 +251,7 @@ export default class Controller {
     document.getElementById('not-surveyed-num').innerHTML = 0;
     controller.state.currentActiveView = 'company';
     controller.state.selectedCompany.name = company;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=5So00jOfZyq3hcqvFzBlBd_84UfknMx26gj_s3tPSj0L1_yGnn6qcd_WvnNH6U-OiQzdYIqbk76nk76R_RJAkZSoYMDo2zPcXla9gGDcRha7mxvAt6ACpKgLMzgz7BLNWSrdgw9gIxTlKquL4OJMON6ukWwdIuKiztmQ5CTFLR0nVLdEpCkfzI912F5iLTFmHvrO7vDU6YklT1t4XBtfIQ2Y57xdJvcCNQE3qbqR2ESwldHo60rS5xEgVh-mg0np', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=g4NXFvRNPFo0AROh2sRU-9MlwhWQbJcP5y2zgB8yNHXt9oCcvXRpMf9DE30RZNN2FM1BY21cS9ZWyQTJK37Ibu-klccdG-NEveDbpZgdYMVZYJH_1Rnvafu4muozNPxDVHSo2C4V67BRBr_A8ynk5X0HknYq0JcrY7Jl7TW8aUSeX6vrCvouwycojbNdMzRx467trhtF6HuwSUo1QX7t5HATP9-bKNbj49o69JWup0p4wBFwk8bouMJx8UvzvUsZ', function(response){
         let centerPoint = JSON.parse(response);
         console.log(centerPoint);
         controller.map.map.flyTo({
@@ -261,9 +282,9 @@ export default class Controller {
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2017FireHydrantDistricts/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=', function(response){
       let responseObj = JSON.parse(response);
       document.querySelector('.tabular-titles').innerHTML = "<div>District</div><div>Inspected</div><div>Not Inspected</div>";
-      document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
+      // document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
       controller.map.map.getSource('districts').setData(responseObj);
-      Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=q_I5u9NsU394TD1r8ivM2ABFGzDSpV4syF8RUojmiorqWmE1ILksZgi8homADnEBeGiCt0t5C1pzmyTbcj3_aNrpby5e_WK5zOz3lLi6vbmYHy7K4bXrCfRY0iDdv8FgWtP--BSlb6BEurVx3jaYtfl1BwsjCxMfaAgqhU9sm1RtQNyzj56zdjfXjQNb298d-1nBIaZDZ4JWYvzX1zwW_DiZ0paiP7zZElRxGsKrnWeu9oYjY-OtaAUYtPR9E-Zk', function(response){
+      Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W', function(response){
         let responseObj = JSON.parse(response);
         console.log(responseObj);
         controller.map.map.getSource('districts-labels').setData(responseObj);
@@ -275,6 +296,8 @@ export default class Controller {
           districtListing["" + district.properties.company_di] = {inspected: 0, total: 0, notInspected: []};
         });
         controller.cityData.hydrants.data.features.forEach(function(hydrant){
+          console.log(hydrant.attributes.INSPECTDT);
+          console.log(controller.surveyPeriod.start);
           if(  districtListing[hydrant.attributes.FIREDISTID]){
             if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
               districtListing[hydrant.attributes.FIREDISTID].inspected++;
@@ -294,12 +317,20 @@ export default class Controller {
           totalNotSurved += districtListing[dist].total - districtListing[dist].inspected;
         }
         document.querySelector('.tabular-body').innerHTML = tempTabBody;
-        document.getElementById('surveyed-num').innerHTML = totalSurveyed;
-        document.getElementById('not-surveyed-num').innerHTML = totalNotSurved;
+        document.getElementById('surveyed-num').innerHTML = totalSurveyed.toLocaleString();
+        document.getElementById('not-surveyed-num').innerHTML = totalNotSurved.toLocaleString();
+        let drillDownBtns = document.querySelectorAll('.not-inspected');
+        drillDownBtns.forEach(function(btn){
+          btn.addEventListener('click',function(ev){
+             controller.loadDrillDown(ev, controller);
+          });
+        });
+        document.getElementById('initial-loader-overlay').className = '';
       });
     });
   }
   filterByDistrict(district, controller){
+    document.getElementById('initial-loader-overlay').className = 'active';
     document.querySelector('.blocks-body').innerHTML = "";
     document.querySelector('.companies-snapshots.active').innerHTML = "";
     document.querySelector('.data-panel').className = "data-panel active";
@@ -308,7 +339,7 @@ export default class Controller {
     document.getElementById('not-surveyed-num').innerHTML = 0;
     controller.state.currentActiveView = 'district';
     controller.state.selectedDistrict.name = district;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=q_I5u9NsU394TD1r8ivM2ABFGzDSpV4syF8RUojmiorqWmE1ILksZgi8homADnEBeGiCt0t5C1pzmyTbcj3_aNrpby5e_WK5zOz3lLi6vbmYHy7K4bXrCfRY0iDdv8FgWtP--BSlb6BEurVx3jaYtfl1BwsjCxMfaAgqhU9sm1RtQNyzj56zdjfXjQNb298d-1nBIaZDZ4JWYvzX1zwW_DiZ0paiP7zZElRxGsKrnWeu9oYjY-OtaAUYtPR9E-Zk', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W', function(response){
         let centerPoint = JSON.parse(response);
         console.log(centerPoint);
         controller.map.map.flyTo({
@@ -339,7 +370,7 @@ export default class Controller {
       });
     });
     let params = {
-      token : Controller.getToken(),
+      token : controller.token,
       where: "FIREDISTID='" + district + "'",
       geometryType: "esriGeometryEnvelope",
       spatialRel: "esriSpatialRelIntersects",
@@ -502,10 +533,11 @@ export default class Controller {
           });
         });
       }
+      document.getElementById('initial-loader-overlay').className = '';
     });
   }
   filterByHydrant(hydrant, controller){
-    console.log(hydrant);
+    document.getElementById('initial-loader-overlay').className = 'active';
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ controller.state.selectedDistrict.name +'</span></a></li><li><a href="#"><span>4</span><span class="breadcrumb-title">Hydrant - '+ hydrant.properties.hydrantID +'</span></a></li>';
     let breadcrumbs = document.querySelectorAll('.cf a');
     breadcrumbs.forEach(function(bread){
@@ -558,20 +590,6 @@ export default class Controller {
     // needsPainting: hydrant.attributes.NEEDSPAINTING,
     // seizedCaps: hydrant.attributes.SEIZEDCAPS,
     // greased: hydrant.attributes.GREASED,
-  }
-  static setValidation(val){
-    this.validation = val;
-  }
-  static setMap(map){
-    this.map = map;
-  }
-  static getMap(){
-    return this.map;
-  }
-  static getToken(){
-    return this.token;
-  }
-  static setToken(token){
-    this.token = token;
+    document.getElementById('initial-loader-overlay').className = '';
   }
 }

@@ -3,7 +3,7 @@ import Controller from './controller.class.js';
 import Connector from './connector.class.js';
 (function(){
   let controller = new Controller(
-    1506830400, 1512104400, {
+    1506830400000, 1510722000000, {
     styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,
@@ -26,7 +26,7 @@ import Connector from './connector.class.js';
       {
         id: "companies-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=5So00jOfZyq3hcqvFzBlBd_84UfknMx26gj_s3tPSj0L1_yGnn6qcd_WvnNH6U-OiQzdYIqbk76nk76R_RJAkZSoYMDo2zPcXla9gGDcRha7mxvAt6ACpKgLMzgz7BLNWSrdgw9gIxTlKquL4OJMON6ukWwdIuKiztmQ5CTFLR0nVLdEpCkfzI912F5iLTFmHvrO7vDU6YklT1t4XBtfIQ2Y57xdJvcCNQE3qbqR2ESwldHo60rS5xEgVh-mg0np'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=g4NXFvRNPFo0AROh2sRU-9MlwhWQbJcP5y2zgB8yNHXt9oCcvXRpMf9DE30RZNN2FM1BY21cS9ZWyQTJK37Ibu-klccdG-NEveDbpZgdYMVZYJH_1Rnvafu4muozNPxDVHSo2C4V67BRBr_A8ynk5X0HknYq0JcrY7Jl7TW8aUSeX6vrCvouwycojbNdMzRx467trhtF6HuwSUo1QX7t5HATP9-bKNbj49o69JWup0p4wBFwk8bouMJx8UvzvUsZ'
       },
       {
         id: "districts",
@@ -36,7 +36,7 @@ import Connector from './connector.class.js';
       {
         id: "districts-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27E44%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=q_I5u9NsU394TD1r8ivM2ABFGzDSpV4syF8RUojmiorqWmE1ILksZgi8homADnEBeGiCt0t5C1pzmyTbcj3_aNrpby5e_WK5zOz3lLi6vbmYHy7K4bXrCfRY0iDdv8FgWtP--BSlb6BEurVx3jaYtfl1BwsjCxMfaAgqhU9sm1RtQNyzj56zdjfXjQNb298d-1nBIaZDZ4JWYvzX1zwW_DiZ0paiP7zZElRxGsKrnWeu9oYjY-OtaAUYtPR9E-Zk'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27E44%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W'
       }
     ],
     layers: [
@@ -227,7 +227,13 @@ import Connector from './connector.class.js';
   document.getElementById('query').addEventListener('click', function(e){
     controller.filterData(e, controller);
   });
-  document.querySelector('.close').addEventListener('click', controller.closeAlert);
+  let closeAlertBtns = document.querySelectorAll('.close');
+  closeAlertBtns.forEach(function(btn){
+    btn.addEventListener('click', function(ev){
+        controller.closeAlert(ev)
+    });
+  });
+
   $( "#start-date" ).datepicker();
   $( "#end-date" ).datepicker();
 })(window);

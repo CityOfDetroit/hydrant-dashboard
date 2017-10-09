@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:300,300i,700,900');
+@import "loader.scss";
 $base-duration: 500ms;
 $cubic: cubic-bezier(.64,.09,.08,1);
 // Colors
@@ -37,13 +38,105 @@ main {position: relative; width: 100%;}
 h1,h2,h3,h4,h5{font-weight: bold}
 img{width: 100%;}
 // ====================== mobile ============================
-#alert-overlay{
+#alert-overlay, #drill-down-overlay, #initial-loader-overlay{
 	display: none;
 
 	article{
 		padding: 0;
 		transition: all .2s ease-in-out;
 	}
+}
+#initial-loader-overlay.active{
+  position: absolute;
+	z-index: 5;
+	height: 100vh;
+	width: 100vw;
+	padding: 1em;
+	background-color: rgba($color-4, .7);
+	display: flex;
+
+	article{
+		margin: auto;
+		position: relative;
+		max-width: 100%;
+		padding: 4em 2em;
+		transition: all .2s ease-in-out;
+
+		div{
+			padding: .5em;
+
+      p{
+        font-size: 1.28em;
+      }
+		}
+	}
+}
+#drill-down-overlay.active{
+  position: absolute;
+	z-index: 5;
+	height: 100vh;
+	width: 100vw;
+	padding: 1em;
+	background-color: rgba($color-4, .5);
+	display: flex;
+
+	article{
+
+		div{
+			padding: .5em;
+			background-color: $color-4;
+			color: $color-5;
+      max-height: 80vh;
+      overflow-y: scroll;
+
+      .hydrant-title{
+        width: 100%;
+        background-color: $color-1;
+        padding: 0;
+        color: $color-4;
+        display: flex;
+
+        article{
+          width: 33.3334%;
+          padding: 1em;
+          font-weight: bold;
+        }
+      }
+      .hydrant-row:nth-child(even){
+        background-color: $color-3;
+      }
+      .hydrant-row{
+        display: flex;
+        border-bottom: 1px solid $color-1;
+
+        article{
+          width: 33.3334%;
+          padding: 1em;
+        }
+      }
+		}
+
+		.close{
+			position: absolute;
+			top: .5em;
+			right: .5em;
+			font-weight: bold;
+			color: $color-4;
+			border: 2px solid $color-4;
+			padding: .25em .5em;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+	}
+}
+#drill-down-overlay.active > article{
+  margin: auto;
+  position: relative;
+  width: 80%;
+  max-width: 100%;
+  background-color: $color-5;
+  padding: 4em 2em;
+  transition: all .2s ease-in-out;
 }
 #alert-overlay.active{
 	position: absolute;

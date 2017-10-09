@@ -80,6 +80,9 @@ export default class Controller {
             return t;
         }
     });
+    for(let tempComp in controller.cityData.companies){
+      controller.cityData.companies[tempComp] = {inspected: 0, total: 0};
+    }
     controller.cityData.hydrants.data.features.forEach(function(hydrant){
       let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
       if(controller.cityData.companies[tempCompanyName]){

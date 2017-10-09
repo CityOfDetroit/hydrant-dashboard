@@ -41,7 +41,7 @@ export default class Controller {
       Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response), function(response){
         tempParent.token = response;
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
-          console.log(JSON.parse(response));
+          // console.log(JSON.parse(response));
           let tempHTML = "";
           tempParent.cityData.companies = {};
           JSON.parse(response).features.forEach(function(company){
@@ -119,7 +119,7 @@ export default class Controller {
     let bars = document.querySelectorAll('.progress');
     bars.forEach(function(bar){
       bar.addEventListener('click', function(ev){
-        console.log(ev);
+        // console.log(ev);
         controller.filterByCompany(ev.target.id, controller);
       });
     });
@@ -128,9 +128,9 @@ export default class Controller {
     (ev.target.parentNode.parentNode.id === 'alert-overlay') ? document.getElementById('alert-overlay').className = '': document.getElementById('drill-down-overlay').className = '';
   }
   loadDrillDown(ev, controller){
-    console.log(ev);
-    console.log(ev.target.parentNode.id);
-    console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
+    // console.log(ev);
+    // console.log(ev.target.parentNode.id);
+    // console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
     let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
     controller.state.selectedCompany.data[ev.target.parentNode.id].notInspected.forEach(function(hydrant){
       let date = new Date(hydrant.attributes.INSPECTDT);
@@ -166,8 +166,8 @@ export default class Controller {
         }
       }
     }
-    console.log(viewType);
-    console.log(item);
+    // console.log(viewType);
+    // console.log(item);
     let tmpObj = [{
       layer: {
         id: null
@@ -189,7 +189,7 @@ export default class Controller {
         tmpObj[0].properties.company_di = item;
         break;
       default:
-        console.log("Hydrant view can't go back");
+        // console.log("Hydrant view can't go back");
     }
     controller.filterData(tmpObj, controller);
   }
@@ -199,7 +199,7 @@ export default class Controller {
     let endDate = null;
     let polygon = null;
     if(Array.isArray(e)){
-      console.log(e[0].layer.id);
+      // console.log(e[0].layer.id);
       switch (e[0].layer.id) {
         case 'city':
           controller.loadCityData(controller);
@@ -253,7 +253,7 @@ export default class Controller {
     controller.state.selectedCompany.name = company;
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=g4NXFvRNPFo0AROh2sRU-9MlwhWQbJcP5y2zgB8yNHXt9oCcvXRpMf9DE30RZNN2FM1BY21cS9ZWyQTJK37Ibu-klccdG-NEveDbpZgdYMVZYJH_1Rnvafu4muozNPxDVHSo2C4V67BRBr_A8ynk5X0HknYq0JcrY7Jl7TW8aUSeX6vrCvouwycojbNdMzRx467trhtF6HuwSUo1QX7t5HATP9-bKNbj49o69JWup0p4wBFwk8bouMJx8UvzvUsZ', function(response){
         let centerPoint = JSON.parse(response);
-        console.log(centerPoint);
+        // console.log(centerPoint);
         controller.map.map.flyTo({
             center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
             zoom: 13.5,
@@ -286,7 +286,7 @@ export default class Controller {
       controller.map.map.getSource('districts').setData(responseObj);
       Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W', function(response){
         let responseObj = JSON.parse(response);
-        console.log(responseObj);
+        // console.log(responseObj);
         controller.map.map.getSource('districts-labels').setData(responseObj);
         let tempTabBody = "";
         let totalSurveyed = 0;
@@ -296,8 +296,6 @@ export default class Controller {
           districtListing["" + district.properties.company_di] = {inspected: 0, total: 0, notInspected: []};
         });
         controller.cityData.hydrants.data.features.forEach(function(hydrant){
-          console.log(hydrant.attributes.INSPECTDT);
-          console.log(controller.surveyPeriod.start);
           if(  districtListing[hydrant.attributes.FIREDISTID]){
             if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
               districtListing[hydrant.attributes.FIREDISTID].inspected++;
@@ -307,9 +305,9 @@ export default class Controller {
             districtListing[hydrant.attributes.FIREDISTID].total++;
           }
         });
-        console.log(districtListing);
+        // console.log(districtListing);
         controller.state.selectedCompany.data = districtListing;
-        console.log(controller.state.selectedCompany.data);
+        // console.log(controller.state.selectedCompany.data);
         for(let dist in districtListing){
           let tempRowHtml = "<article id=\""+ dist +"\" class=\"tabular-row\"><div>"+ dist +"</div><div>"+ districtListing[dist].inspected +"</div><div class=\"not-inspected\">" + (districtListing[dist].total - districtListing[dist].inspected) + "</div></article>";
           tempTabBody += tempRowHtml;
@@ -341,7 +339,7 @@ export default class Controller {
     controller.state.selectedDistrict.name = district;
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W', function(response){
         let centerPoint = JSON.parse(response);
-        console.log(centerPoint);
+        // console.log(centerPoint);
         controller.map.map.flyTo({
             center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
             zoom: 15.5,
@@ -386,7 +384,7 @@ export default class Controller {
       f: 'json'
     }
     Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params, function(response){
-      console.log(JSON.parse(response));
+      // console.log(JSON.parse(response));
       let responseObj = JSON.parse(response);
       let hydrantList = {
         "type": "FeatureCollection",
@@ -494,10 +492,10 @@ export default class Controller {
       document.querySelector('#surveyed-num').innerHTML = inspectedNum;
       document.querySelector('#not-surveyed-num').innerHTML = notInspectedNum;
       if(controller.map.map.getSource('hydrants')){
-        console.log("Updating hydrants");
+        // console.log("Updating hydrants");
         controller.map.map.getSource('hydrants').setData(hydrantList);
       }else{
-        console.log("adding hydrants");
+        // console.log("adding hydrants");
         controller.map.map.addSource('hydrants', {
           type: 'geojson',
           data: hydrantList

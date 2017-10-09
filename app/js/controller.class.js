@@ -36,6 +36,10 @@ export default class Controller {
     this.initialLoad();
   }
   initialLoad(){
+    let tempDate = new Date(this.surveyPeriod.start);
+    document.getElementById('start-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
+    tempDate = new Date(this.surveyPeriod.end);
+    document.getElementById('end-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
     let tempParent = this;
     Connector.getData('private/login.json', function(response){
       Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response), function(response){

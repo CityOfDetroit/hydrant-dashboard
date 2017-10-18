@@ -43,6 +43,7 @@ export default class Controller {
     let tempParent = this;
     Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants_admin_info/', function(response){
       Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response).data, function(response){
+        // console.log(response);
         tempParent.token = response;
         Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
           // console.log(JSON.parse(response));
@@ -54,6 +55,7 @@ export default class Controller {
           });
           document.getElementById("company-list").innerHTML = tempHTML;
           Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
+            // console.log(JSON.parse(response));
             tempParent.cityData.hydrants = JSON.parse(response);
             tempParent.loadCityData(tempParent);
           });
@@ -88,16 +90,19 @@ export default class Controller {
       controller.cityData.companies[tempComp] = {inspected: 0, total: 0};
     }
     controller.cityData.hydrants.data.features.forEach(function(hydrant){
-      let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
-      if(controller.cityData.companies[tempCompanyName]){
-        if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
-          controller.cityData.companies[tempCompanyName].inspected++;
+      if(hydrant.attributes.FIREDISTID != null){
+        let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
+        if(controller.cityData.companies[tempCompanyName]){
+          if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
+            controller.cityData.companies[tempCompanyName].inspected++;
+          }
+          controller.cityData.companies[tempCompanyName].total++;
         }
-        controller.cityData.companies[tempCompanyName].total++;
       }
     });
     let tempSnaps = "";
     let totalInspected = 0;
+    // console.log(controller.cityData.companies);
     for(let comp in controller.cityData.companies){
       totalInspected += controller.cityData.companies[comp].inspected;
       tempSnaps += '<article class="snap"><label for="'+ comp +'" class="tooltip--triangle" data-tooltip="'+ controller.cityData.companies[comp].inspected +'/'+ controller.cityData.companies[comp].total +'"><span>' + comp + '</span><div id="'+ comp +'" ';
@@ -127,7 +132,14 @@ export default class Controller {
     bars.forEach(function(bar){
       bar.addEventListener('click', function(ev){
         // console.log(ev);
-        controller.filterByCompany(ev.target.id, controller);
+        let id = null;
+        if(ev.target.id != ''){
+          id = ev.target.id;
+        }else{
+          id = ev.target.parentNode.parentNode.id;
+        }
+        // console.log(id);
+        controller.filterByCompany(id, controller);
       });
     });
   }

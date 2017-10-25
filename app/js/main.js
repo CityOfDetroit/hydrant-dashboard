@@ -26,7 +26,7 @@ import Connector from './connector.class.js';
       {
         id: "companies-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=g4NXFvRNPFo0AROh2sRU-9MlwhWQbJcP5y2zgB8yNHXt9oCcvXRpMf9DE30RZNN2FM1BY21cS9ZWyQTJK37Ibu-klccdG-NEveDbpZgdYMVZYJH_1Rnvafu4muozNPxDVHSo2C4V67BRBr_A8ynk5X0HknYq0JcrY7Jl7TW8aUSeX6vrCvouwycojbNdMzRx467trhtF6HuwSUo1QX7t5HATP9-bKNbj49o69JWup0p4wBFwk8bouMJx8UvzvUsZ'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson'
       },
       {
         id: "districts",
@@ -36,7 +36,7 @@ import Connector from './connector.class.js';
       {
         id: "districts-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27E44%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=KuKzzHoi-V1Xbrt9BpRvifKqLAt3o7IHA7JajpvzKBxz19rKag0N_gq2StwxStE_9KVqrxr3oJoqq3A5xcfkivrs12AIxs7Pzhcwbx-iFsMySoQANOJSIICBeMN0l7merAI_iUAbl2y9H9jTCC16HMTtaDSwm7yPKnPiQGelbNOULAw8IFLTI8RmB9anGe96AGfYWoqOgVvyTbiAMmKPualWjdKhBGxLSvUlcpyTOJdAah81I8GX9qFAngV1Bm0W'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27E44%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson'
       }
     ],
     layers: [
@@ -187,7 +187,7 @@ import Connector from './connector.class.js';
         layers: ["companies-fill"]
       });
       if (features.length) {
-        console.log(features);
+        // console.log(features);
         controller.filterData(features, controller);
       }else{
         if (this.getLayer("districts-fill")) {
@@ -195,7 +195,7 @@ import Connector from './connector.class.js';
             layers: ["districts-fill"]
           });
           if (features.length) {
-            console.log(features);
+            // console.log(features);
             controller.filterData(features, controller);
           }else{
             if (this.getLayer("not-inspected-hydrants")) {
@@ -203,14 +203,14 @@ import Connector from './connector.class.js';
                 layers: ["not-inspected-hydrants"]
               });
               if (features.length) {
-                console.log(features);
+                // console.log(features);
                 controller.filterData(features, controller);
               }else{
                 features = this.queryRenderedFeatures(e.point, {
                   layers: ["inspected-hydrants"]
                 });
                 if (features.length) {
-                  console.log(features);
+                  // console.log(features);
                   controller.filterData(features, controller);
                 }else{
                   console.log('no feature');

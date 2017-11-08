@@ -41,32 +41,13 @@ export default class Controller {
     tempDate = new Date(this.surveyPeriod.end);
     document.getElementById('end-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
     let tempParent = this;
-    // Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants_admin_info/', function(response){
-    //   Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/tokens/generateToken", JSON.parse(response).data, function(response){
-    //     // console.log(response);
-    //     tempParent.token = response;
-    //     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
-    //       // console.log(JSON.parse(response));
-    //       let tempHTML = "";
-    //       tempParent.cityData.companies = {};
-    //       JSON.parse(response).features.forEach(function(company){
-    //         tempHTML += '<option value="' + company.properties.new_engine + '"></option>';
-    //         tempParent.cityData.companies[""+ company.properties.new_engine] =  {inspected: 0, total: 0};
-    //       });
-    //       document.getElementById("company-list").innerHTML = tempHTML;
-    //       Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
-    //         // console.log(JSON.parse(response));
-    //         tempParent.cityData.hydrants = JSON.parse(response);
-    //         tempParent.loadCityData(tempParent);
-    //       });
-    //     });
-    //   });
-    // });
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
-      // console.log(JSON.parse(response));
+    let url = 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson';
+    fetch(url)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(response) {
       let tempHTML = "";
       tempParent.cityData.companies = {};
-      JSON.parse(response).features.forEach(function(company){
+      response.features.forEach(function(company){
         tempHTML += '<option value="' + company.properties.new_engine + '"></option>';
         tempParent.cityData.companies[""+ company.properties.new_engine] =  {inspected: 0, total: 0};
       });
@@ -102,7 +83,7 @@ export default class Controller {
         }
     });
     for(let tempComp in controller.cityData.companies){
-      controller.cityData.companies[tempComp] = {inspected: 0, total: 0};
+      controller.cityData.companies[tempComp] = {inspected: 0, total: 0, broke: 0};
     }
     controller.cityData.hydrants.data.features.forEach(function(hydrant){
       if(hydrant.attributes.FIREDISTID != null){
@@ -110,6 +91,7 @@ export default class Controller {
         if(controller.cityData.companies[tempCompanyName]){
           if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
             controller.cityData.companies[tempCompanyName].inspected++;
+            (hydrant.attributes.OPERABLE === 'No') ? controller.cityData.companies[tempCompanyName].broke++ : 0;
           }
           controller.cityData.companies[tempCompanyName].total++;
         }
@@ -117,9 +99,11 @@ export default class Controller {
     });
     let tempSnaps = "";
     let totalInspected = 0;
+    let totalBroke = 0;
     // console.log(controller.cityData.companies);
     for(let comp in controller.cityData.companies){
       totalInspected += controller.cityData.companies[comp].inspected;
+      totalBroke += controller.cityData.companies[comp].broke;
       tempSnaps += '<article class="snap"><label for="'+ comp +'" class="tooltip--triangle" data-tooltip="'+ controller.cityData.companies[comp].inspected +'/'+ controller.cityData.companies[comp].total +'"><span>' + comp + '</span><div id="'+ comp +'" ';
       switch (true) {
         case (controller.cityData.companies[comp].inspected/controller.cityData.companies[comp].total) < .25:
@@ -141,6 +125,7 @@ export default class Controller {
     }
     document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
     document.getElementById('surveyed-num').innerHTML = totalInspected.toLocaleString();
+    document.getElementById('not-working-num').innerHTML = totalBroke.toLocaleString();
     document.getElementById('not-surveyed-num').innerHTML = (controller.cityData.hydrants.data.features.length - totalInspected).toLocaleString();
     document.getElementById('initial-loader-overlay').className = '';
     let bars = document.querySelectorAll('.progress');
@@ -162,14 +147,21 @@ export default class Controller {
     (ev.target.parentNode.parentNode.id === 'alert-overlay') ? document.getElementById('alert-overlay').className = '': document.getElementById('drill-down-overlay').className = '';
   }
   loadDrillDown(ev, controller){
-    // console.log(ev);
+    console.log(ev);
     // console.log(ev.target.parentNode.id);
     // console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
     let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
-    controller.state.selectedCompany.data[ev.target.parentNode.id].notInspected.forEach(function(hydrant){
-      let date = new Date(hydrant.attributes.INSPECTDT);
-      tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
-    });
+    if(ev.target.className === 'not-inspected broken-list'){
+      controller.state.selectedCompany.data[ev.target.parentNode.id].brokenList.forEach(function(hydrant){
+        let date = new Date(hydrant.attributes.INSPECTDT);
+        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
+      });
+    }else{
+      controller.state.selectedCompany.data[ev.target.parentNode.id].notInspected.forEach(function(hydrant){
+        let date = new Date(hydrant.attributes.INSPECTDT);
+        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
+      });
+    }
     document.querySelector('#drill-down-overlay div').innerHTML = tempHTML;
     document.getElementById('drill-down-overlay').className = 'active';
   }
@@ -283,9 +275,10 @@ export default class Controller {
     document.querySelector('.map-panel').className = "map-panel active";
     document.getElementById('surveyed-num').innerHTML = 0;
     document.getElementById('not-surveyed-num').innerHTML = 0;
+    document.getElementById('not-working-num').innerHTML = 0;
     controller.state.currentActiveView = 'company';
     controller.state.selectedCompany.name = company;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=i3oZ5AOhfml-1aLdbAXa-4Kz_Bn5IBu_uF1XDMPP1Iyydu4eBaRmKUDsQZFZpcCE-TGhqNhjtj9S7EbUNXqWhBiLtgxjUwPzaYw8WMx0BBCcU8qgu8bpXeDdlPKDK2cKGj5KdZlJSuNT-Gl58_MjK7FnC6izYXx5ve-4V1u0nvqeKdRDNd4AvLim892icqVSX1U-zSnL89dO5H-oU8OUIKhWUh5HvtBu3BD0pp1AaEyjM9nVOgbZz91h15RRwc3O', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=', function(response){
         let centerPoint = JSON.parse(response);
         // console.log(centerPoint);
         controller.map.map.flyTo({
@@ -315,7 +308,7 @@ export default class Controller {
     });
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2017FireHydrantDistricts/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=', function(response){
       let responseObj = JSON.parse(response);
-      document.querySelector('.tabular-titles').innerHTML = "<div>District</div><div>Inspected</div><div>Not Inspected</div>";
+      document.querySelector('.tabular-titles').innerHTML = "<div>District</div><div>Inspected</div><div>Not Inspected</div><div>Inoperable</div>";
       // document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
       controller.map.map.getSource('districts').setData(responseObj);
       Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
@@ -325,14 +318,19 @@ export default class Controller {
         let tempTabBody = "";
         let totalSurveyed = 0;
         let totalNotSurved = 0;
+        let totalBroke = 0;
         let districtListing = {};
         JSON.parse(response).features.forEach(function(district){
-          districtListing["" + district.properties.company_di] = {inspected: 0, total: 0, notInspected: []};
+          districtListing["" + district.properties.company_di] = {inspected: 0, total: 0, broke: 0, notInspected: [], brokenList: []};
         });
         controller.cityData.hydrants.data.features.forEach(function(hydrant){
           if(  districtListing[hydrant.attributes.FIREDISTID]){
             if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
               districtListing[hydrant.attributes.FIREDISTID].inspected++;
+              if(hydrant.attributes.OPERABLE === 'No'){
+                districtListing[hydrant.attributes.FIREDISTID].broke++;
+                districtListing[hydrant.attributes.FIREDISTID].brokenList.push(hydrant);
+              }
             }else{
               districtListing[hydrant.attributes.FIREDISTID].notInspected.push(hydrant);
             }
@@ -343,14 +341,16 @@ export default class Controller {
         controller.state.selectedCompany.data = districtListing;
         // console.log(controller.state.selectedCompany.data);
         for(let dist in districtListing){
-          let tempRowHtml = "<article id=\""+ dist +"\" class=\"tabular-row\"><div>"+ dist +"</div><div>"+ districtListing[dist].inspected +"</div><div class=\"not-inspected\">" + (districtListing[dist].total - districtListing[dist].inspected) + "</div></article>";
+          let tempRowHtml = "<article id=\""+ dist +"\" class=\"tabular-row\"><div>"+ dist +"</div><div>"+ districtListing[dist].inspected +"</div><div class=\"not-inspected\">" + (districtListing[dist].total - districtListing[dist].inspected) + "</div><div class=\"not-inspected broken-list\">" + districtListing[dist].broke + "</div></article>";
           tempTabBody += tempRowHtml;
+          totalBroke += districtListing[dist].broke;
           totalSurveyed += districtListing[dist].inspected;
           totalNotSurved += districtListing[dist].total - districtListing[dist].inspected;
         }
         document.querySelector('.tabular-body').innerHTML = tempTabBody;
         document.getElementById('surveyed-num').innerHTML = totalSurveyed.toLocaleString();
         document.getElementById('not-surveyed-num').innerHTML = totalNotSurved.toLocaleString();
+        document.getElementById('not-working-num').innerHTML = totalBroke.toLocaleString();
         let drillDownBtns = document.querySelectorAll('.not-inspected');
         drillDownBtns.forEach(function(btn){
           btn.addEventListener('click',function(ev){
@@ -369,6 +369,7 @@ export default class Controller {
     document.querySelector('.map-panel').className = "map-panel active";
     document.getElementById('surveyed-num').innerHTML = 0;
     document.getElementById('not-surveyed-num').innerHTML = 0;
+    document.getElementById('not-working-num').innerHTML = 0;
     controller.state.currentActiveView = 'district';
     controller.state.selectedDistrict.name = district;
     Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json', function(response){
@@ -392,7 +393,7 @@ export default class Controller {
             }
         });
     });
-    document.querySelector('.tabular-titles').innerHTML = "<div>ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
+    document.querySelector('.tabular-titles').innerHTML = "<div>DWSD Asset ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
     document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ district +'</span></a></li>';
     let breadcrumbs = document.querySelectorAll('.cf a');
@@ -409,6 +410,7 @@ export default class Controller {
     let tempBody = '';
     let inspectedNum = 0;
     let notInspectedNum = 0;
+    let brokeNum = 0;
     controller.cityData.hydrants.data.features.forEach(function(hydrant, index){
       if(hydrant.attributes.FIREDISTID === district){
         let temHydrantObj = {
@@ -426,24 +428,30 @@ export default class Controller {
             inspectedOn: hydrant.attributes.INSPECTDT,
             address: hydrant.attributes.LOCDESC,
             notes: hydrant.attributes.NOTES,
+            operable: hydrant.attributes.OPERABLE,
             inspectionStatus: null
           }
         };
         let hydrantStatus = null;
         if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
           inspectedNum++;
+          (hydrant.attributes.OPERABLE === 'No') ? brokeNum++ : 0;
           hydrantStatus = true;
         }else{
           notInspectedNum++;
           hydrantStatus = false;
         }
+        let tempCondition = null;
+        let tempNotes = null;
+        (hydrant.attributes.CONDITION === undefined) ? tempCondition = '' : tempCondition = hydrant.attributes.CONDITION;
+        (hydrant.attributes.NOTES === undefined) ? tempNotes = '' : tempNotes = hydrant.attributes.NOTES;
         tempBody += `
         <article id=\"row-${index}\" class=\"tabular-row inspected-${hydrantStatus}\">
         <div>${hydrant.attributes.HYDRANTID}</div>
         <div>${hydrant.attributes.LOCDESC}</div>
-        <div>${hydrant.attributes.CONDITION}</div>
+        <div>${tempCondition}</div>
         <div>${hydrantStatus}</div>
-        <div>${hydrant.attributes.NOTES}</div>
+        <div>${tempNotes}</div>
         </article>`;
         temHydrantObj.properties.inspectionStatus = hydrantStatus;
         hydrantList.features.push(temHydrantObj);
@@ -452,6 +460,7 @@ export default class Controller {
     document.querySelector('.tabular-body').innerHTML = tempBody;
     document.querySelector('#surveyed-num').innerHTML = inspectedNum;
     document.querySelector('#not-surveyed-num').innerHTML = notInspectedNum;
+    document.querySelector('#not-working-num').innerHTML = brokeNum;
     if(controller.map.map.getSource('hydrants')){
       // console.log("Updating hydrants");
       controller.map.map.getSource('hydrants').setData(hydrantList);
@@ -461,7 +470,7 @@ export default class Controller {
         type: 'geojson',
         data: hydrantList
       });
-      controller.map.map.loadImage('img/fire-hydrant-blue.png', function(error, image) {
+      controller.map.map.loadImage('img/fire-hydrant-inspected.png', function(error, image) {
         if (error) throw error;
         controller.map.map.addImage('inspected-hydrant', image);
         controller.map.map.addLayer({
@@ -476,7 +485,7 @@ export default class Controller {
             'filter': ['==', 'inspectionStatus', true]
         });
       });
-      controller.map.map.loadImage('img/fire-hydrant-red.png', function(error, image) {
+      controller.map.map.loadImage('img/fire-hydrant-not-inspected.png', function(error, image) {
         if (error) throw error;
         controller.map.map.addImage('not-inspected-hydrant', image);
         controller.map.map.addLayer({
@@ -488,178 +497,26 @@ export default class Controller {
                 "icon-image": "not-inspected-hydrant",
                 "icon-size": 0.5
             },
-            'filter': ['==', 'inspectionStatus', false]
+            'filter': ['all',['==', 'inspectionStatus', false],['==', 'operable', 'Yes']]
+        });
+      });
+      controller.map.map.loadImage('img/fire-hydrant-broke.png', function(error, image) {
+        if (error) throw error;
+        controller.map.map.addImage('not-working-hydrant', image);
+        controller.map.map.addLayer({
+            "id": "not-workin-hydrants",
+            "type": "symbol",
+            "source": 'hydrants',
+            "minzoom": 15,
+            "layout": {
+                "icon-image": "not-working-hydrant",
+                "icon-size": 0.5
+            },
+            'filter': ['==', 'operable', 'No']
         });
       });
     }
     document.getElementById('initial-loader-overlay').className = '';
-    // =========================================================================
-    // let params = {
-    //   token : controller.token,
-    //   where: "FIREDISTID='" + district + "'",
-    //   geometryType: "esriGeometryEnvelope",
-    //   spatialRel: "esriSpatialRelIntersects",
-    //   outFields: '*',
-    //   returnGeometry: true,
-    //   returnTrueCurves: false,
-    //   returnIdsOnly: false,
-    //   returnCountOnly: false,
-    //   outSR: 4326,
-    //   returnZ: false,
-    //   returnM: false,
-    //   returnDistinctValues: false,
-    //   f: 'json'
-    // }
-    // Connector.postData("https://cors-anywhere.herokuapp.com/"+"https://gisweb.glwater.org/arcgis/rest/services/Hydrants/dwsd_HydrantInspection_v2/MapServer/0/query",params, function(response){
-    //   // console.log(JSON.parse(response));
-    //   let responseObj = JSON.parse(response);
-    //   let hydrantList = {
-    //     "type": "FeatureCollection",
-    //     "features": []
-    //   };
-    //   let tempBody = '';
-    //   let inspectedNum = 0;
-    //   let notInspectedNum = 0;
-    //   responseObj.features.forEach(function(hydrant, index){
-    //     let temHydrantObj = {
-    //       "type": "Feature",
-    //       "geometry": {
-    //         "type": "Point",
-    //         "coordinates": [
-    //           hydrant.geometry.x,
-    //           hydrant.geometry.y
-    //         ]
-    //       },
-    //       "properties": {
-    //         ID: hydrant.attributes.OBJECTID,
-    //         hydrantID: hydrant.attributes.HYDRANTID,
-    //         inspectedOn: hydrant.attributes.INSPECTDT,
-    //         address: hydrant.attributes.LOCDESC,
-    //         notes: hydrant.attributes.NOTES,
-    //         inspectionStatus: null,
-    //         facility: hydrant.attributes.FACILITYID,
-    //         fireDistrict: hydrant.attributes.FIREDISTID,
-    //         grid: hydrant.attributes.GRIDNUM,
-    //         operable: hydrant.attributes.OPERABLE,
-    //         flowed: hydrant.attributes.FLOWED,
-    //         noFlow: hydrant.attributes.NOFLOW,
-    //         brokenStem: hydrant.attributes.BROKESTEM,
-    //         frostJack: hydrant.attributes.FROSTJACK,
-    //         hydrantCap: hydrant.attributes.HYDCAP,
-    //         hydrantDrain: hydrant.attributes.HYDDRAIN,
-    //         defectiveThread: hydrant.attributes.DEFTHREAD,
-    //         leaking: hydrant.attributes.LEAKING,
-    //         chatter: hydrant.attributes.CHATTER,
-    //         frozen: hydrant.attributes.FROZEN,
-    //         nearCriticalFacility: hydrant.attributes.CRITICALFAC,
-    //         hardToOpen: hydrant.attributes.HARDOPEN,
-    //         hardToClose: hydrant.attributes.HARDCLOSE,
-    //         hitByVehicle: hydrant.attributes.HITVEHICLE,
-    //         missing: hydrant.attributes.MISSHYDRANT,
-    //         installDate: hydrant.attributes.INSTALLDATE,
-    //         manufacturer: hydrant.attributes.MANUFACTURER,
-    //         model: hydrant.attributes.HYDMODEL,
-    //         castingYear: hydrant.attributes.CASTYEAR,
-    //         activeFlag: hydrant.attributes.ACTIVEFLAG,
-    //         ownedBy: hydrant.attributes.OWNEDBY,
-    //         maintainedBy: hydrant.attributes.MAINTBY,
-    //         lastUpdate: hydrant.attributes.LASTUPDATE,
-    //         lastEditor: hydrant.attributes.LASTEDITOR,
-    //         hydrantTYP: hydrant.attributes.HYDRANTTYP,
-    //         status: hydrant.attributes.STATUS,
-    //         condition: hydrant.attributes.CONDITION,
-    //         security: hydrant.attributes.SECURITY,
-    //         facingCorridor: hydrant.attributes.FACINGCORR,
-    //         operateNut: hydrant.attributes.OPERATENUT,
-    //         photo: hydrant.attributes.PHOTO,
-    //         x: hydrant.attributes.XCOORDI,
-    //         y: hydrant.attributes.YCOORDI,
-    //         ownership: hydrant.attributes.OWNERSHIP,
-    //         district: hydrant.attributes.DISTRICT,
-    //         pressure: hydrant.attributes.PRESSUREZO,
-    //         barrelDiameter: hydrant.attributes.BARRELDIAM,
-    //         crossStreet: hydrant.attributes.CROSSTREET,
-    //         mainSize: hydrant.attributes.WMAINSIZE,
-    //         distanceToCrossStreet: hydrant.attributes.DISTTOCROSSST,
-    //         createdBy: hydrant.attributes.CREATEDBY,
-    //         createdDate: hydrant.attributes.CREATEDATE,
-    //         createdUser: hydrant.attributes.CREATED_USER,
-    //         lastEditedUser: hydrant.attributes.LAST_EDITED_USER,
-    //         lastEditedDate: hydrant.attributes.LAST_EDITED_DATE,
-    //         priority: hydrant.attributes.CUSTOMPRIORITY,
-    //         lowFlow: hydrant.attributes.LowFlow,
-    //         inaccessibleHydrant: hydrant.attributes.InaccessibleHydrant,
-    //         carrollDrain: hydrant.attributes.CarrollDrain,
-    //         lastPaintDate: hydrant.attributes.LASTPAINTDATE,
-    //         hydrantValveLock: hydrant.attributes.HYDRANTVALVELOC,
-    //         operatedBy: hydrant.attributes.OPERATEDBY,
-    //         pressureTestFail: hydrant.attributes.HYD_PRESS_TEST_FAIL,
-    //         pressureTestFailReason: hydrant.attributes.PRESSTESTFAILREASON,
-    //         flushing: hydrant.attributes.HYD_FLUSHING,
-    //         DeadEndHydrant: hydrant.attributes.DeadEndHydrant,
-    //         missingChains: hydrant.attributes.MISSINGCHAINS,
-    //         needsPainting: hydrant.attributes.NEEDSPAINTING,
-    //         seizedCaps: hydrant.attributes.SEIZEDCAPS,
-    //         greased: hydrant.attributes.GREASED
-    //       }
-    //     };
-    //     tempBody += "<article id=\"row-"+ index +"\" class=\"tabular-row ";
-    //     if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
-    //       inspectedNum++;
-    //       tempBody += "inspected-true\"><div>" + hydrant.attributes.HYDRANTID + "</div><div>" + hydrant.attributes.LOCDESC + "</div><div>" + hydrant.attributes.CONDITION + "</div><div>TRUE</div><div>" + hydrant.attributes.NOTES + "</div></article>";
-    //       temHydrantObj.properties.inspectionStatus = true;
-    //     }else{
-    //       notInspectedNum++;
-    //       tempBody += "inspected-false\"><div>" + hydrant.attributes.HYDRANTID + "</div><div>" + hydrant.attributes.LOCDESC + "</div><div>" + hydrant.attributes.CONDITION + "</div><div>FALSE</div><div>" + hydrant.attributes.NOTES + "</div></article>";
-    //       temHydrantObj.properties.inspectionStatus = false;
-    //     }
-    //     hydrantList.features.push(temHydrantObj);
-    //   });
-    //   document.querySelector('.tabular-body').innerHTML = tempBody;
-    //   document.querySelector('#surveyed-num').innerHTML = inspectedNum;
-    //   document.querySelector('#not-surveyed-num').innerHTML = notInspectedNum;
-    //   if(controller.map.map.getSource('hydrants')){
-    //     // console.log("Updating hydrants");
-    //     controller.map.map.getSource('hydrants').setData(hydrantList);
-    //   }else{
-    //     // console.log("adding hydrants");
-    //     controller.map.map.addSource('hydrants', {
-    //       type: 'geojson',
-    //       data: hydrantList
-    //     });
-    //     controller.map.map.loadImage('img/fire-hydrant-blue.png', function(error, image) {
-    //       if (error) throw error;
-    //       controller.map.map.addImage('inspected-hydrant', image);
-    //       controller.map.map.addLayer({
-    //           "id": "inspected-hydrants",
-    //           "type": "symbol",
-    //           "source": 'hydrants',
-    //           "minzoom": 15,
-    //           "layout": {
-    //               "icon-image": "inspected-hydrant",
-    //               "icon-size": 0.5
-    //           },
-    //           'filter': ['==', 'inspectionStatus', true]
-    //       });
-    //     });
-    //     controller.map.map.loadImage('img/fire-hydrant-red.png', function(error, image) {
-    //       if (error) throw error;
-    //       controller.map.map.addImage('not-inspected-hydrant', image);
-    //       controller.map.map.addLayer({
-    //           "id": "not-inspected-hydrants",
-    //           "type": "symbol",
-    //           "source": 'hydrants',
-    //           "minzoom": 15,
-    //           "layout": {
-    //               "icon-image": "not-inspected-hydrant",
-    //               "icon-size": 0.5
-    //           },
-    //           'filter': ['==', 'inspectionStatus', false]
-    //       });
-    //     });
-    //   }
-    //   document.getElementById('initial-loader-overlay').className = '';
-    // });
   }
   filterByHydrant(hydrant, controller){
     document.getElementById('initial-loader-overlay').className = 'active';
@@ -671,11 +528,13 @@ export default class Controller {
           controller.loadPrevious(e, controller);
         });
       });
+      let tempNotes = null;
+      (hydrant.properties.notes === undefined) ? tempNotes = 'No notes available.' : tempNotes = hydrant.properties.notes;
       let convertedDate = new Date(hydrant.properties.inspectedOn);
       controller.state.selectedHydrant = hydrant.properties.hydrantID;
       document.querySelector('.tabular-titles').innerHTML = '';
       document.querySelector('.tabular-body').innerHTML = '';
-      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>HYDRANT ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + hydrant.properties.notes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article>';
+      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>DWSD ASSET ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
       document.getElementById('initial-loader-overlay').className = '';
     }, 1000);
 

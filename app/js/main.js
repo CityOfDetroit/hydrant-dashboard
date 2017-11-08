@@ -171,6 +171,11 @@ import Connector from './connector.class.js';
                 features = this.queryRenderedFeatures(e.point, {
                   layers: ["inspected-hydrants"]
                 });
+                if (!features.length) {
+                  features = this.queryRenderedFeatures(e.point, {
+                    layers: ["not-workin-hydrants"]
+                  });
+                }
               }
             }
           }
@@ -213,7 +218,15 @@ import Connector from './connector.class.js';
                   // console.log(features);
                   controller.filterData(features, controller);
                 }else{
-                  console.log('no feature');
+                  features = this.queryRenderedFeatures(e.point, {
+                    layers: ["not-workin-hydrants"]
+                  });
+                  if (features.length) {
+                    // console.log(features);
+                    controller.filterData(features, controller);
+                  }else{
+                    console.log('no feature');
+                  }
                 }
               }
             }

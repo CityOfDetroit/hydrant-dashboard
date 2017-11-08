@@ -393,7 +393,7 @@ export default class Controller {
             }
         });
     });
-    document.querySelector('.tabular-titles').innerHTML = "<div>DWSD Asset ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
+    document.querySelector('.tabular-titles').innerHTML = "<div>Facility ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
     document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ district +'</span></a></li>';
     let breadcrumbs = document.querySelectorAll('.cf a');
@@ -534,7 +534,7 @@ export default class Controller {
       controller.state.selectedHydrant = hydrant.properties.hydrantID;
       document.querySelector('.tabular-titles').innerHTML = '';
       document.querySelector('.tabular-body').innerHTML = '';
-      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>DWSD ASSET ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
+      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>FACILITY ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
       document.getElementById('initial-loader-overlay').className = '';
     }, 1000);
 

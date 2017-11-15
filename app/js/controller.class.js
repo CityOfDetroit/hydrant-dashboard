@@ -85,6 +85,7 @@ export default class Controller {
     for(let tempComp in controller.cityData.companies){
       controller.cityData.companies[tempComp] = {inspected: 0, total: 0, broke: 0};
     }
+    console.log(controller.surveyPeriod);
     controller.cityData.hydrants.data.features.forEach(function(hydrant){
       if(hydrant.attributes.FIREDISTID != null){
         let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
@@ -245,6 +246,7 @@ export default class Controller {
       startDate = document.getElementById('start-date').value;
       endDate = document.getElementById('end-date').value;
       polygon = document.getElementById('company').value;
+      let temp = null;
       switch (true) {
         case startDate === '':
           document.querySelector('#alert-overlay div').innerHTML = "Need start date.";
@@ -255,11 +257,24 @@ export default class Controller {
           document.getElementById('alert-overlay').className = 'active';
           break;
         case polygon === '':
-          document.querySelector('#alert-overlay div').innerHTML = "Need company.";
-          document.getElementById('alert-overlay').className = 'active';
+          temp = startDate.split('/');
+          startDate = temp[2] + '-' + temp[0] + '-' + temp[1] + 'T00:00:00';
+          let startUnix = (new Date(temp)).getTime();
+          temp = endDate.split('/');
+          endDate = temp[2] + '-' + temp[0] + '-' + temp[1] + 'T23:59:59';
+          let endUnix = (new Date(temp)).getTime();
+          console.log(startUnix);
+          console.log(endUnix);
+          controller.surveyPeriod = {
+            start: startUnix,
+            end: endUnix
+          }
+          controller.loadCityData(controller);
+          // document.querySelector('#alert-overlay div').innerHTML = "Need company.";
+          // document.getElementById('alert-overlay').className = 'active';
           break;
         default:
-          let temp = startDate.split('/');
+          temp = startDate.split('/');
           startDate = temp[2] + '-' + temp[0] + '-' + temp[1];
           temp = endDate.split('/');
           endDate = temp[2] + '-' + temp[0] + '-' + temp[1];

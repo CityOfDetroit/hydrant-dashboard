@@ -85,7 +85,7 @@ export default class Controller {
     for(let tempComp in controller.cityData.companies){
       controller.cityData.companies[tempComp] = {inspected: 0, total: 0, broke: 0};
     }
-    console.log(controller.surveyPeriod);
+    // console.log(controller.surveyPeriod);
     controller.cityData.hydrants.data.features.forEach(function(hydrant){
       if(hydrant.attributes.FIREDISTID != null){
         let tempCompanyName = hydrant.attributes.FIREDISTID.split('-')[0];
@@ -99,10 +99,12 @@ export default class Controller {
       }
     });
     let tempSnaps = "";
+    let totalHydrants = 0;
     let totalInspected = 0;
     let totalBroke = 0;
     // console.log(controller.cityData.companies);
     for(let comp in controller.cityData.companies){
+      totalHydrants += controller.cityData.companies[comp].total;
       totalInspected += controller.cityData.companies[comp].inspected;
       totalBroke += controller.cityData.companies[comp].broke;
       tempSnaps += '<article class="snap"><label for="'+ comp +'" class="tooltip--triangle" data-tooltip="'+ controller.cityData.companies[comp].inspected +'/'+ controller.cityData.companies[comp].total +'"><span>' + comp + '</span><div id="'+ comp +'" ';
@@ -127,7 +129,7 @@ export default class Controller {
     document.querySelector('.companies-snapshots.active').innerHTML = tempSnaps;
     document.getElementById('surveyed-num').innerHTML = totalInspected.toLocaleString();
     document.getElementById('not-working-num').innerHTML = totalBroke.toLocaleString();
-    document.getElementById('not-surveyed-num').innerHTML = (controller.cityData.hydrants.data.features.length - totalInspected).toLocaleString();
+    document.getElementById('not-surveyed-num').innerHTML = (totalHydrants - totalInspected).toLocaleString();
     document.getElementById('initial-loader-overlay').className = '';
     let bars = document.querySelectorAll('.progress');
     bars.forEach(function(bar){
@@ -148,7 +150,7 @@ export default class Controller {
     (ev.target.parentNode.parentNode.id === 'alert-overlay') ? document.getElementById('alert-overlay').className = '': document.getElementById('drill-down-overlay').className = '';
   }
   loadDrillDown(ev, controller){
-    console.log(ev);
+    // console.log(ev);
     // console.log(ev.target.parentNode.id);
     // console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
     let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
@@ -263,8 +265,8 @@ export default class Controller {
           temp = endDate.split('/');
           endDate = temp[2] + '-' + temp[0] + '-' + temp[1] + 'T23:59:59';
           let endUnix = (new Date(temp)).getTime();
-          console.log(startUnix);
-          console.log(endUnix);
+          // console.log(startUnix);
+          // console.log(endUnix);
           controller.surveyPeriod = {
             start: startUnix,
             end: endUnix

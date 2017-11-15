@@ -3,7 +3,7 @@ import Controller from './controller.class.js';
 import Connector from './connector.class.js';
 (function(){
   let controller = new Controller(
-    1506830400000, 1510722000000, {
+    1506830400000, 1510808399000, {
     styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,

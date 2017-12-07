@@ -53,7 +53,7 @@ export default class Controller {
       });
       document.getElementById("company-list").innerHTML = tempHTML;
       Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
-        // console.log(JSON.parse(response));
+        console.log(JSON.parse(response));
         tempParent.cityData.hydrants = JSON.parse(response);
         tempParent.loadCityData(tempParent);
       });
@@ -153,16 +153,16 @@ export default class Controller {
     // console.log(ev);
     // console.log(ev.target.parentNode.id);
     // console.log(controller.state.selectedCompany.data[ev.target.parentNode.id]);
-    let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
+    let tempHTML = '<h1>District - ' + ev.target.parentNode.id + '</h1><article class="hydrant-title"><article>DWSD HYDRANT ID</article><article>ADDRESS</article><article>LAST INSPECTED</article></article>';
     if(ev.target.className === 'not-inspected broken-list'){
       controller.state.selectedCompany.data[ev.target.parentNode.id].brokenList.forEach(function(hydrant){
         let date = new Date(hydrant.attributes.INSPECTDT);
-        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
+        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.FACILITYID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
       });
     }else{
       controller.state.selectedCompany.data[ev.target.parentNode.id].notInspected.forEach(function(hydrant){
         let date = new Date(hydrant.attributes.INSPECTDT);
-        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.HYDRANTID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
+        tempHTML += '<article class="hydrant-row"><article>' + hydrant.attributes.FACILITYID + '</article><article>' + hydrant.attributes.LOCDESC + '</article><article>' + date.toLocaleString("en-us", { month: "short" }) + ' ' + date.getDate() + ', ' + date.getFullYear() + '</article></article>';
       });
     }
     document.querySelector('#drill-down-overlay div').innerHTML = tempHTML;
@@ -410,7 +410,7 @@ export default class Controller {
             }
         });
     });
-    document.querySelector('.tabular-titles').innerHTML = "<div>Facility ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
+    document.querySelector('.tabular-titles').innerHTML = "<div>DWSD Hydrant ID</div><div>Address</div><div>Condition</div><div>Inspected</div><div>Notes</div>";
     document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
     document.querySelector('.cf').innerHTML = '<li><a href="#"><span>1</span><span class="breadcrumb-title">City</span></a></li><li><a href="#"><span>2</span><span class="breadcrumb-title">Company - '+ controller.state.selectedCompany.name +'</span></a></li><li><a href="#"><span>3</span><span class="breadcrumb-title">District - '+ district +'</span></a></li>';
     let breadcrumbs = document.querySelectorAll('.cf a');
@@ -441,7 +441,7 @@ export default class Controller {
           },
           "properties": {
             ID: hydrant.attributes.OBJECTID,
-            hydrantID: hydrant.attributes.HYDRANTID,
+            hydrantID: hydrant.attributes.FACILITYID,
             inspectedOn: hydrant.attributes.INSPECTDT,
             address: hydrant.attributes.LOCDESC,
             notes: hydrant.attributes.NOTES,
@@ -464,7 +464,7 @@ export default class Controller {
         (hydrant.attributes.NOTES === undefined) ? tempNotes = '' : tempNotes = hydrant.attributes.NOTES;
         tempBody += `
         <article id=\"row-${index}\" class=\"tabular-row inspected-${hydrantStatus}\">
-        <div>${hydrant.attributes.HYDRANTID}</div>
+        <div>${hydrant.attributes.FACILITYID}</div>
         <div>${hydrant.attributes.LOCDESC}</div>
         <div>${tempCondition}</div>
         <div>${hydrantStatus}</div>
@@ -551,7 +551,7 @@ export default class Controller {
       controller.state.selectedHydrant = hydrant.properties.hydrantID;
       document.querySelector('.tabular-titles').innerHTML = '';
       document.querySelector('.tabular-body').innerHTML = '';
-      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>FACILITY ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
+      document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>DWSD HYDRANT ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
       document.getElementById('initial-loader-overlay').className = '';
     }, 1000);
 

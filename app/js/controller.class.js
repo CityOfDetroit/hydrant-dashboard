@@ -92,8 +92,8 @@ export default class Controller {
         if(controller.cityData.companies[tempCompanyName]){
           if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
             controller.cityData.companies[tempCompanyName].inspected++;
-            (hydrant.attributes.OPERABLE === 'No') ? controller.cityData.companies[tempCompanyName].broke++ : 0;
           }
+          (hydrant.attributes.OPERABLE === 'No') ? controller.cityData.companies[tempCompanyName].broke++ : 0;
           controller.cityData.companies[tempCompanyName].total++;
         }
       }
@@ -344,12 +344,12 @@ export default class Controller {
           if(  districtListing[hydrant.attributes.FIREDISTID]){
             if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
               districtListing[hydrant.attributes.FIREDISTID].inspected++;
-              if(hydrant.attributes.OPERABLE === 'No'){
-                districtListing[hydrant.attributes.FIREDISTID].broke++;
-                districtListing[hydrant.attributes.FIREDISTID].brokenList.push(hydrant);
-              }
             }else{
               districtListing[hydrant.attributes.FIREDISTID].notInspected.push(hydrant);
+            }
+            if(hydrant.attributes.OPERABLE === 'No'){
+              districtListing[hydrant.attributes.FIREDISTID].broke++;
+              districtListing[hydrant.attributes.FIREDISTID].brokenList.push(hydrant);
             }
             districtListing[hydrant.attributes.FIREDISTID].total++;
           }
@@ -452,12 +452,12 @@ export default class Controller {
         let hydrantStatus = null;
         if(hydrant.attributes.INSPECTDT >= controller.surveyPeriod.start && hydrant.attributes.INSPECTDT <= controller.surveyPeriod.end){
           inspectedNum++;
-          (hydrant.attributes.OPERABLE === 'No') ? brokeNum++ : 0;
           hydrantStatus = true;
         }else{
           notInspectedNum++;
           hydrantStatus = false;
         }
+        (hydrant.attributes.OPERABLE === 'No') ? brokeNum++ : 0;
         let tempCondition = null;
         let tempNotes = null;
         (hydrant.attributes.CONDITION === undefined) ? tempCondition = '' : tempCondition = hydrant.attributes.CONDITION;

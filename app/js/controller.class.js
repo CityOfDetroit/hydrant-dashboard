@@ -48,8 +48,8 @@ export default class Controller {
       let tempHTML = "";
       tempParent.cityData.companies = {};
       response.features.forEach(function(company){
-        tempHTML += '<option value="' + company.properties.new_engine + '"></option>';
-        tempParent.cityData.companies[""+ company.properties.new_engine] =  {inspected: 0, total: 0};
+        tempHTML += '<option value="' + company.properties.fire_compa + '"></option>';
+        tempParent.cityData.companies[""+ company.properties.fire_compa] =  {inspected: 0, total: 0};
       });
       document.getElementById("company-list").innerHTML = tempHTML;
       Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
@@ -211,7 +211,7 @@ export default class Controller {
         break;
       case 'Company':
         tmpObj[0].layer.id = "companies-fill";
-        tmpObj[0].properties.new_engine = item;
+        tmpObj[0].properties.fire_compa = item;
         break;
       case 'District':
         tmpObj[0].layer.id = "districts-fill";
@@ -234,7 +234,7 @@ export default class Controller {
           controller.loadCityData(controller);
           break;
         case "companies-fill":
-          polygon = e[0].properties.new_engine;
+          polygon = e[0].properties.fire_compa;
           controller.filterByCompany(polygon,controller);
           break;
         case "districts-fill":
@@ -295,7 +295,7 @@ export default class Controller {
     document.getElementById('not-working-num').innerHTML = 0;
     controller.state.currentActiveView = 'company';
     controller.state.selectedCompany.name = company;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=new_engine+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=fire_compa+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=', function(response){
         let centerPoint = JSON.parse(response);
         // console.log(centerPoint);
         controller.map.map.flyTo({

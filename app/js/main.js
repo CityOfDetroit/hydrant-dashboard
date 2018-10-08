@@ -3,7 +3,7 @@ import Controller from './controller.class.js';
 import Connector from './connector.class.js';
 (function(){
   let controller = new Controller(
-    1538366422000, 1543554022000, {
+    1538366400000, 1543554000000, {
     styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,
@@ -21,22 +21,22 @@ import Connector from './connector.class.js';
       {
         id: "companies",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018_Hydrant_Survey_Companies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018_Hydrant_Survey_Companies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson'
       },
       {
         id: "companies-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson'
       },
       {
         id: "districts",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018FireHydrantDistricts/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018FireHydrantDistricts/FeatureServer/0/query?where=fire_compa+%3D+%27E44%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson'
       },
       {
         id: "districts-labels",
         type: "geojson",
-        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_District_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
+        data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_fire_compastrict_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
       }
     ],
     layers: [
@@ -124,7 +124,7 @@ import Connector from './connector.class.js';
           "fill-color": '#23A696',
           "fill-opacity": .5
         },
-        "filter": ["==", "company_di", ""]
+        "filter": ["==", "fire_compa", ""]
       },
       {
         'id': 'districts-labels',
@@ -134,7 +134,7 @@ import Connector from './connector.class.js';
         'source': 'districts-labels',
         'layout': {
           "text-font": ["Mark SC Offc Pro Bold"],
-          "text-field": "{company_di}",
+          "text-field": "{fire_compa}",
           "symbol-placement": "point",
           "text-size": 22
         },
@@ -150,7 +150,7 @@ import Connector from './connector.class.js';
       var features = this.queryRenderedFeatures(e.point, {
         layers: ["companies-fill"]
       });
-      // console.log(features);
+      console.log(features);
       if (features.length) {
         this.setFilter("companies-hover", ["==", "fire_compa", features[0].properties.fire_compa]);
       }else{
@@ -160,9 +160,9 @@ import Connector from './connector.class.js';
             layers: ["districts-fill"]
           });
           if (features.length) {
-            this.setFilter("districts-hover", ["==", "company_di", features[0].properties.company_di]);
+            this.setFilter("districts-hover", ["==", "fire_compa", features[0].properties.fire_compa]);
           }else{
-            this.setFilter("districts-hover", ["==", "company_di", ""]);
+            this.setFilter("districts-hover", ["==", "fire_compa", ""]);
             if (this.getLayer("not-inspected-hydrants")) {
               features = this.queryRenderedFeatures(e.point, {
                 layers: ["not-inspected-hydrants"]

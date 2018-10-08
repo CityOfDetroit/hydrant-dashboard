@@ -41,7 +41,7 @@ export default class Controller {
     tempDate = new Date(this.surveyPeriod.end);
     document.getElementById('end-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
     let tempParent = this;
-    let url = 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/HydrantCompanies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson';
+    let url = 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018_Hydrant_Survey_Companies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson';
     fetch(url)
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(response) {
@@ -295,7 +295,7 @@ export default class Controller {
     document.getElementById('not-working-num').innerHTML = 0;
     controller.state.currentActiveView = 'company';
     controller.state.selectedCompany.name = company;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/CompanyLabels/FeatureServer/0/query?where=fire_compa+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=fire_compa+%3D+%27'+ company +'%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=', function(response){
         let centerPoint = JSON.parse(response);
         // console.log(centerPoint);
         controller.map.map.flyTo({
@@ -323,12 +323,12 @@ export default class Controller {
         controller.loadPrevious(e, controller);
       });
     });
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2017FireHydrantDistricts/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018FireHydrantDistricts/FeatureServer/0/query?where=company_di+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=', function(response){
       let responseObj = JSON.parse(response);
       document.querySelector('.tabular-titles').innerHTML = "<div>District</div><div>Inspected</div><div>Not Inspected</div><div>Inoperable</div>";
       // document.querySelector('.tabular-body').innerHTML = '<article class="loading-box">LOADING <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></article>';
       controller.map.map.getSource('districts').setData(responseObj);
-      Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
+      Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
         let responseObj = JSON.parse(response);
         // console.log(responseObj);
         controller.map.map.getSource('districts-labels').setData(responseObj);
@@ -389,7 +389,7 @@ export default class Controller {
     document.getElementById('not-working-num').innerHTML = 0;
     controller.state.currentActiveView = 'district';
     controller.state.selectedDistrict.name = district;
-    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/HydrantLabels/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json', function(response){
+    Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=company_di%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json', function(response){
         let centerPoint = JSON.parse(response);
         // console.log(centerPoint);
         controller.map.map.flyTo({
@@ -559,44 +559,5 @@ export default class Controller {
     // <article class="block"><article><h4>FACILITY</h4><p>' + hydrant.properties.facility + '</p></article></article></article><article class="block"><article><h4>FIRE DISTRICT</h4><p>' + hydrant.properties.fireDistrict + '</p></article></article></article><article class="block"><article><h4>GRID</h4><p>' + hydrant.properties.grid + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article><article class="block"><article><h4>FLOWED</h4><p>' + hydrant.properties.flowed + '</p></article></article></article><article class="block"><article><h4>NO FLOW</h4><p>' + hydrant.properties.noFlow + '</p></article></article></article><article class="block"><article><h4>BROKEN STEM</h4><p>' + hydrant.properties.brokenStem + '</p></article></article></article><article class="block"><article><h4>HYDRANT CAP</h4><p>' + hydrant.properties.hydrantCap + '</p></article></article></article><article class="block"><article><h4>HYDRANT DRAIN</h4><p>' + hydrant.properties.hydrantDrain + '</p></article></article></article><article class="block"><article><h4>DEFECTIVE THREAD</h4><p>' + hydrant.properties.defectiveThread + '</p></article></article></article><article class="block"><article><h4>LEAKING</h4><p>' + hydrant.properties.leaking + '</p></article></article></article><article class="block"><article><h4>CHATTER</h4><p>' + hydrant.properties.chatter + '</p></article></article></article><article class="block"><article><h4>FROZEN</h4><p>' + hydrant.properties.frozen + '</p></article></article></article><article class="block"><article><h4>NEAR CRITICAL FACILITY</h4><p>' + hydrant.properties.nearCriticalFacility + '</p></article></article><article class="block"><article><h4>HARD TO OPEN</h4><p>' + hydrant.properties.hardToOpen + '</p></article></article><article class="block"><article><h4>HARD TO CLOSE</h4><p>' + hydrant.properties.hardToClose + '</p></article></article><article class="block"><article><h4>HIT BY VEHICLE</h4><p>' + hydrant.properties.hitByVehicle + '</p></article></article><article class="block"><article><h4>MISSING</h4><p>' + hydrant.properties.missing + '</p></article></article><article class="block"><article><h4>INSTALL DATE</h4><p>' + hydrant.properties.installDate + '</p></article></article><article class="block"><article><h4>MANUFACTURER</h4><p>' + hydrant.properties.manufacturer + '</p></article></article><article class="block"><article><h4>MODEL</h4><p>' + hydrant.properties.model + '</p></article></article><article class="block"><article><h4>CASTING YEAR</h4><p>' + hydrant.properties.castingYear + '</p></article></article><article class="block"><article><h4>ACTIVE FLAG</h4><p>' + hydrant.properties.activeFlag + '</p></article></article><article><h4>OWNED BY</h4><p>' + hydrant.properties.ownedBy + '</p></article></article><article><h4>OWNED BY</h4><p>' + hydrant.properties.ownedBy + '</p></article></article>';
 
 
-    // maintainedBy: hydrant.attributes.MAINTBY,
-    // lastUpdate: hydrant.attributes.LASTUPDATE,
-    // lastEditor: hydrant.attributes.LASTEDITOR,
-    // hydrantTYP: hydrant.attributes.HYDRANTTYP,
-    // status: hydrant.attributes.STATUS,
-    // condition: hydrant.attributes.CONDITION,
-    // security: hydrant.attributes.SECURITY,
-    // facingCorridor: hydrant.attributes.FACINGCORR,
-    // operateNut: hydrant.attributes.OPERATENUT,
-    // photo: hydrant.attributes.PHOTO,
-    // x: hydrant.attributes.XCOORDI,
-    // y: hydrant.attributes.YCOORDI,
-    // ownership: hydrant.attributes.OWNERSHIP,
-    // district: hydrant.attributes.DISTRICT,
-    // pressure: hydrant.attributes.PRESSUREZO,
-    // barrelDiameter: hydrant.attributes.BARRELDIAM,
-    // crossStreet: hydrant.attributes.CROSSTREET,
-    // mainSize: hydrant.attributes.WMAINSIZE,
-    // distanceToCrossStreet: hydrant.attributes.DISTTOCROSSST,
-    // createdBy: hydrant.attributes.CREATEDBY,
-    // createdDate: hydrant.attributes.CREATEDATE,
-    // createdUser: hydrant.attributes.CREATED_USER,
-    // lastEditedUser: hydrant.attributes.LAST_EDITED_USER,
-    // lastEditedDate: hydrant.attributes.LAST_EDITED_DATE,
-    // priority: hydrant.attributes.CUSTOMPRIORITY,
-    // lowFlow: hydrant.attributes.LowFlow,
-    // inaccessibleHydrant: hydrant.attributes.InaccessibleHydrant,
-    // carrollDrain: hydrant.attributes.CarrollDrain,
-    // lastPaintDate: hydrant.attributes.LASTPAINTDATE,
-    // hydrantValveLock: hydrant.attributes.HYDRANTVALVELOC,
-    // operatedBy: hydrant.attributes.OPERATEDBY,
-    // pressureTestFail: hydrant.attributes.HYD_PRESS_TEST_FAIL,
-    // pressureTestFailReason: hydrant.attributes.PRESSTESTFAILREASON,
-    // flushing: hydrant.attributes.HYD_FLUSHING,
-    // DeadEndHydrant: hydrant.attributes.DeadEndHydrant,
-    // missingChains: hydrant.attributes.MISSINGCHAINS,
-    // needsPainting: hydrant.attributes.NEEDSPAINTING,
-    // seizedCaps: hydrant.attributes.SEIZEDCAPS,
-    // greased: hydrant.attributes.GREASED,
   }
 }

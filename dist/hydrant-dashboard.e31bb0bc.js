@@ -36618,7 +36618,7 @@ class Controller {
           break;
 
         case "districts-fill":
-          polygon = e[0].properties.fire_compa;
+          polygon = e[0].properties.company_di;
           controller.filterByDistrict(polygon, controller);
           break;
 
@@ -36780,6 +36780,7 @@ class Controller {
   }
 
   filterByDistrict(district, controller) {
+    console.log(district);
     document.getElementById('initial-loader-overlay').className = 'active';
     document.querySelector('.blocks-body').innerHTML = "";
     document.querySelector('.companies-snapshots.active').innerHTML = "";
@@ -36791,7 +36792,7 @@ class Controller {
     controller.state.currentActiveView = 'district';
     controller.state.selectedDistrict.name = district;
 
-    _connector.default.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_Company_Labels_2018/FeatureServer/0/query?where=fire_compa%3D+%27' + district + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json', function (response) {
+    _connector.default.getData(`https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/Fire_Company_District_Labels_2018/FeatureServer/0/query?where=company_di%3D%27E42-12%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=`, function (response) {
       let centerPoint = JSON.parse(response);
       console.log(centerPoint);
       controller.map.map.flyTo({
@@ -37001,7 +37002,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }, {
       id: "districts-labels",
       type: "geojson",
-      data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Fire_fire_compastrict_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson'
+      data: 'https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/Fire_Company_District_Labels_2018/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token='
     }],
     layers: [{
       "id": "companies-fill",
@@ -37244,7 +37245,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54906" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55176" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

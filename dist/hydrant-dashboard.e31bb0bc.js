@@ -36973,7 +36973,7 @@ var _controller = _interopRequireDefault(require("./controller.class"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (function () {
-  let controller = new _controller.default(1538366400000, 1543554000000, {
+  let controller = new _controller.default(1542430800000, 1546318799000, {
     styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,
@@ -37245,7 +37245,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57145" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49358" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

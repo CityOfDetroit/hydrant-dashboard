@@ -1,6 +1,11 @@
 'use strict';
 import Map from './map.class';
 import Connector from './connector.class';
+
+const iHydrantName = require('./img/fire-hydrant-inspected.png');
+const nHydrantName = require('./img/fire-hydrant-not-inspected.png');
+const bHydrantName = require('./img/fire-hydrant-broke.png');
+
 const turf = require('@turf/simplify');
 const arcGIS = require('terraformer-arcgis-parser');
 const GeoJSON = require('geojson');
@@ -52,7 +57,7 @@ export default class Controller {
       });
       document.getElementById("company-list").innerHTML = tempHTML;
       Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
-        console.log(JSON.parse(response));
+        // console.log(JSON.parse(response));
         tempParent.cityData.hydrants = JSON.parse(response);
         tempParent.loadCityData(tempParent);
       });
@@ -379,7 +384,7 @@ export default class Controller {
     });
   }
   filterByDistrict(district, controller){
-    console.log(district);
+    // console.log(district);
     document.getElementById('initial-loader-overlay').className = 'active';
     document.querySelector('.blocks-body').innerHTML = "";
     document.querySelector('.companies-snapshots.active').innerHTML = "";
@@ -392,7 +397,7 @@ export default class Controller {
     controller.state.selectedDistrict.name = district;
     Connector.getData(`https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/Fire_Company_District_Labels_2018/FeatureServer/0/query?where=company_di%3D%27${district}%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=json&token=`, function(response){
         let centerPoint = JSON.parse(response);
-        console.log(centerPoint);
+        // console.log(centerPoint);
         controller.map.map.flyTo({
             center: [centerPoint.features[0].geometry.x, centerPoint.features[0].geometry.y],
             zoom: 15.5,
@@ -488,7 +493,7 @@ export default class Controller {
         type: 'geojson',
         data: hydrantList
       });
-      controller.map.map.loadImage('./img/fire-hydrant-inspected.png', function(error, image) {
+      controller.map.map.loadImage(iHydrantName, function(error, image) {
         if (error) throw error;
         controller.map.map.addImage('inspected-hydrant', image);
         controller.map.map.addLayer({
@@ -498,12 +503,12 @@ export default class Controller {
             "minzoom": 15,
             "layout": {
                 "icon-image": "inspected-hydrant",
-                "icon-size": 0.5
+                "icon-size": 0.75
             },
             'filter': ['==', 'inspectionStatus', true]
         });
       });
-      controller.map.map.loadImage('./img/fire-hydrant-not-inspected.png', function(error, image) {
+      controller.map.map.loadImage(nHydrantName, function(error, image) {
         if (error) throw error;
         controller.map.map.addImage('not-inspected-hydrant', image);
         controller.map.map.addLayer({
@@ -513,12 +518,12 @@ export default class Controller {
             "minzoom": 15,
             "layout": {
                 "icon-image": "not-inspected-hydrant",
-                "icon-size": 0.5
+                "icon-size": 0.75
             },
             'filter': ['all',['==', 'inspectionStatus', false],['==', 'operable', 'Yes']]
         });
       });
-      controller.map.map.loadImage('./img/fire-hydrant-broke.png', function(error, image) {
+      controller.map.map.loadImage(bHydrantName, function(error, image) {
         if (error) throw error;
         controller.map.map.addImage('not-working-hydrant', image);
         controller.map.map.addLayer({
@@ -528,7 +533,7 @@ export default class Controller {
             "minzoom": 15,
             "layout": {
                 "icon-image": "not-working-hydrant",
-                "icon-size": 0.5
+                "icon-size": 0.75
             },
             'filter': ['==', 'operable', 'No']
         });

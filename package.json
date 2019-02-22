@@ -15,15 +15,18 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "cssnano": "^4.1.4",
-    "sass": "^1.14.1"
+    "cssnano": "^4.1.10",
+    "sass": "^1.17.1"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^2.3.0",
     "@turf/simplify": "^5.1.5",
     "babel-polyfill": "^6.23.0",
+    "es6-promise": "^4.2.6",
     "geojson": "^0.5.0",
-    "mapbox-gl": "^0.50.0-beta.1",
+    "img": "^3.0.3",
+    "isomorphic-fetch": "^2.2.1",
+    "mapbox-gl": "^0.53.0",
     "terraformer-arcgis-parser": "^1.1.0"
   }
 }

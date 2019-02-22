@@ -9,6 +9,9 @@ const bHydrantName = require('./img/fire-hydrant-broke.png');
 const turf = require('@turf/simplify');
 const arcGIS = require('terraformer-arcgis-parser');
 const GeoJSON = require('geojson');
+
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 export default class Controller {
   constructor(start, end, init) {
     this.surveyPeriod = {
@@ -335,7 +338,7 @@ export default class Controller {
       controller.map.map.getSource('districts').setData(responseObj);
       Connector.getData('https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/Fire_Company_District_Labels_2018/FeatureServer/0/query?where=fire_compa+%3D+%27' + company + '%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&datumTransformation=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson', function(response){
         let responseObj = JSON.parse(response);
-        console.log(responseObj);
+        // console.log(responseObj);
         controller.map.map.getSource('districts-labels').setData(responseObj);
         let tempTabBody = "";
         let totalSurveyed = 0;
@@ -486,6 +489,7 @@ export default class Controller {
     document.querySelector('#not-working-num').innerHTML = brokeNum;
     if(controller.map.map.getSource('hydrants')){
       // console.log("Updating hydrants");
+      // console.log(hydrantList);
       controller.map.map.getSource('hydrants').setData(hydrantList);
     }else{
       // console.log("adding hydrants");
@@ -560,10 +564,5 @@ export default class Controller {
       document.querySelector('.blocks-body').innerHTML = '<article class="block"><article><h4>DWSD HYDRANT ID</h4><p>' + hydrant.properties.hydrantID + '</p></article></article><article class="block"><article><h4>ADDRESS</h4><p>' + hydrant.properties.address + '</p></article></article><article class="block"><article><h4>INSPECTED ON</h4><p>' + (convertedDate.getMonth()+1) + '/' + convertedDate.getDate() + '/' + convertedDate.getFullYear() + '</p></article></article></article><article class="block"><article><h4>NOTES</h4><p>' + tempNotes + '</p></article></article></article><article class="block"><article><h4>INSPECTED</h4><p>' + hydrant.properties.inspectionStatus + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article>';
       document.getElementById('initial-loader-overlay').className = '';
     }, 1000);
-
-
-    // <article class="block"><article><h4>FACILITY</h4><p>' + hydrant.properties.facility + '</p></article></article></article><article class="block"><article><h4>FIRE DISTRICT</h4><p>' + hydrant.properties.fireDistrict + '</p></article></article></article><article class="block"><article><h4>GRID</h4><p>' + hydrant.properties.grid + '</p></article></article></article><article class="block"><article><h4>OPERABLE</h4><p>' + hydrant.properties.operable + '</p></article></article></article><article class="block"><article><h4>FLOWED</h4><p>' + hydrant.properties.flowed + '</p></article></article></article><article class="block"><article><h4>NO FLOW</h4><p>' + hydrant.properties.noFlow + '</p></article></article></article><article class="block"><article><h4>BROKEN STEM</h4><p>' + hydrant.properties.brokenStem + '</p></article></article></article><article class="block"><article><h4>HYDRANT CAP</h4><p>' + hydrant.properties.hydrantCap + '</p></article></article></article><article class="block"><article><h4>HYDRANT DRAIN</h4><p>' + hydrant.properties.hydrantDrain + '</p></article></article></article><article class="block"><article><h4>DEFECTIVE THREAD</h4><p>' + hydrant.properties.defectiveThread + '</p></article></article></article><article class="block"><article><h4>LEAKING</h4><p>' + hydrant.properties.leaking + '</p></article></article></article><article class="block"><article><h4>CHATTER</h4><p>' + hydrant.properties.chatter + '</p></article></article></article><article class="block"><article><h4>FROZEN</h4><p>' + hydrant.properties.frozen + '</p></article></article></article><article class="block"><article><h4>NEAR CRITICAL FACILITY</h4><p>' + hydrant.properties.nearCriticalFacility + '</p></article></article><article class="block"><article><h4>HARD TO OPEN</h4><p>' + hydrant.properties.hardToOpen + '</p></article></article><article class="block"><article><h4>HARD TO CLOSE</h4><p>' + hydrant.properties.hardToClose + '</p></article></article><article class="block"><article><h4>HIT BY VEHICLE</h4><p>' + hydrant.properties.hitByVehicle + '</p></article></article><article class="block"><article><h4>MISSING</h4><p>' + hydrant.properties.missing + '</p></article></article><article class="block"><article><h4>INSTALL DATE</h4><p>' + hydrant.properties.installDate + '</p></article></article><article class="block"><article><h4>MANUFACTURER</h4><p>' + hydrant.properties.manufacturer + '</p></article></article><article class="block"><article><h4>MODEL</h4><p>' + hydrant.properties.model + '</p></article></article><article class="block"><article><h4>CASTING YEAR</h4><p>' + hydrant.properties.castingYear + '</p></article></article><article class="block"><article><h4>ACTIVE FLAG</h4><p>' + hydrant.properties.activeFlag + '</p></article></article><article><h4>OWNED BY</h4><p>' + hydrant.properties.ownedBy + '</p></article></article><article><h4>OWNED BY</h4><p>' + hydrant.properties.ownedBy + '</p></article></article>';
-
-
   }
 }

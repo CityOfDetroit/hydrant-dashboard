@@ -18,6 +18,7 @@ export default class Controller {
       start: start,
       end: end
     }
+
     this.cityData = {
       companies: null,
       hydrants: null
@@ -41,12 +42,14 @@ export default class Controller {
     this.token = null;
     this.companyList = null;
     this.initialLoad();
+
+
   }
   initialLoad(){
     let tempDate = new Date(this.surveyPeriod.start);
-    document.getElementById('start-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
+    document.getElementById('start-date').value =(tempDate.getMonth()+3) + '/' + (tempDate.getDate()- 14)  + '/' + tempDate.getFullYear();
     tempDate = new Date(this.surveyPeriod.end);
-    document.getElementById('end-date').value = (tempDate.getMonth()+1) + '/' + tempDate.getDate() + '/' + tempDate.getFullYear();
+    document.getElementById('end-date').value = (tempDate.getMonth()+2) + '/' + (tempDate.getDate()+ 15) + '/' + tempDate.getFullYear();
     let tempParent = this;
     let url = 'https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/2018_Hydrant_Survey_Companies/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnHiddenFields=false&returnGeometry=true&returnCentroid=false&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=geojson';
     fetch(url)

@@ -2,7 +2,7 @@
 import Controller from './controller.class';
 (function(){
   let controller = new Controller(
-    1573930612000, 1577854612000, {
+    1577860821000, 1581835221000, {
     styleURL: 'mapbox://styles/mapbox',
     mapContainer: 'map',
     geocoder: false,

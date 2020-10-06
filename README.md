@@ -17,12 +17,12 @@ This project was created using:
 2. Install node dependencies.
 
     ```
-    $ npm install
+    $ yarn install
     ```
 
 3. Run local instance.
     ```
-    $ parcel index.html
+    $ yanr start
     ```
 ## Resources
 

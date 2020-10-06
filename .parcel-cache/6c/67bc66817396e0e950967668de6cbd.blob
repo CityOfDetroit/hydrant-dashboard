@@ -1,0 +1,1 @@
+require('./bundle-manifest').register(JSON.parse("{\"7qrad\":\"index.f40244f0.js\",\"5JzSQ\":\"fire-hydrant-inspected.bc705017.png\",\"4rcYT\":\"fire-hydrant-not-inspected.91d8d635.png\",\"3FzlW\":\"fire-hydrant-broke.7899c609.png\"}"));

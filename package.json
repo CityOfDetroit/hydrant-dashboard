@@ -2,14 +2,14 @@
   "name": "Hydrant-Map",
   "version": "1.0.0",
   "description": "Dashboard to monitor hydrant survelling in the City of Detroit.",
-  "main": "main.js",
+  "main": "index.html",
   "repository": {
     "type": "git",
     "url": "https://github.com/CityOfDetroit/Hydrant-Map.git"
   },
   "scripts": {
     "start": "parcel index.html --https --no-cache -p 3000",
-    "build": "parcel build index.js --no-cache --public-url '.' -d build"
+    "build": "parcel build index.html --no-cache --public-url '.' --no-source-maps --dist-dir build"
   },
   "author": "Edgar Montes",
   "license": "MIT",

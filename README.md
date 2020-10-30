@@ -24,6 +24,11 @@ This project was created using:
     ```
     $ yanr start
     ```
+
+4. Create production build.
+    ```
+    $ yarn build
+    ```
 ## Resources
 
 * SLACK - #webteam

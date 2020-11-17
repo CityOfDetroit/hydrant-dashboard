@@ -62,3 +62,6 @@ typings/
 
 # parcel files
 .parcel-cache
+
+# temp build
+dist/

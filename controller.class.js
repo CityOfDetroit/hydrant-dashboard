@@ -60,7 +60,7 @@ export default class Controller {
       });
       document.getElementById("company-list").innerHTML = tempHTML;
       Connector.getData('https://apis.detroitmi.gov/data_cache/hydrants/', function(response){
-        console.log(JSON.parse(response));
+        // console.log(JSON.parse(response));
         tempParent.cityData.hydrants = JSON.parse(response);
         tempParent.loadCityData(tempParent);
       });

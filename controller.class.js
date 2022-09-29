@@ -10,8 +10,6 @@ const turf = require('@turf/simplify');
 const arcGIS = require('terraformer-arcgis-parser');
 const GeoJSON = require('geojson');
 
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
 export default class Controller {
   constructor(start, end, init) {
     this.surveyPeriod = {
